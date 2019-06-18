@@ -1,0 +1,34 @@
+{{ define "main" }}
+
+    {{- partial "skipnav.html" . -}}
+
+    {{- partial "header.html" . -}}
+
+    <main property="mainContentOfPage" class="container">
+
+        {{- partial "components/header.html" . -}}
+
+        <h1 id="wb-cont">{{.Title}}</h1>
+
+        {{- partial "components/toc.html" . -}}
+
+        {{ range .Pages }}
+
+            <p>PAGES:</p>
+            {{/* The context, ".", is now each one of the pages as it goes through the loop */}}
+
+            {{ printf "%#v" . }}
+
+            {{ end }}
+
+        {{ .Content }}
+
+        {{- partial "components/footer.html" . -}}
+
+        {{- partial "mainfooter.html" . -}}
+
+    </main>
+
+    {{- partial "footer.html" . -}}
+
+{{ end }}

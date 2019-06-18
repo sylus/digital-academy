@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+{{ "<!--[if lt IE 9]>" | safeHTML }}
+<html class="no-js lt-ie9" lang="en" dir="ltr">
+{{ "<![endif]-->" | safeHTML }}
+{{ "<!--[if gt IE 8]><!-->" | safeHTML }}
+<html class="no-js" lang="en" dir="ltr">
+{{ "<!--<![endif]-->" | safeHTML }}
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+    <title>
+        {{ if eq .URL "/" }}
+        {{ .Site.Title }}
+        {{ else if eq .URL "/post/" }}
+        All Entries &middot; {{ .Site.Title }}
+        {{ else if in .URL "/tags/" }}
+        {{ .Site.Title }}
+        {{ else }}
+        {{ .Title }}
+        {{ end }}
+    </title>
+	<link rel="stylesheet" href="{{ .Site.BaseURL }}{{"/lib/reveal.js/css/reveal.css"}}">
+	<link rel="stylesheet" href="{{ .Site.BaseURL }}{{"/lib/reveal.js/css/theme/black.css"}}" id="theme">
+	<link rel="stylesheet" href="{{ .Site.BaseURL }}{{"/lib/reveal.js/lib/css/zenburn.css"}}">
+    <link rel="stylesheet" href="{{ .Site.BaseURL }}/css/grid-revealjs.css">
+    <link rel="stylesheet" href="{{ .Site.BaseURL }}/css/custom.css">
+</head>
+<body vocab="http://schema.org/" typeof="WebPage">
+	<div class="reveal">
+	<div class="slides">
+	<section data-markdown
+	         data-separator="^---"
+		 data-separator-vertical="^___"
+		 data-separator-notes="^Note:"
+		data-charset="utf8">
+	{{ .RawContent }}
+	</section>
+	</div>
+	</div>
+<script src="{{ .Site.BaseURL }}{{"/lib/reveal.js/lib/js/head.min.js"}}"></script>
+	<script src="{{ .Site.BaseURL }}{{"/lib/reveal.js/js/reveal.js"}}"></script>
+	<script>
+		Reveal.initialize({
+		      	embedded : true,
+				history: true,
+		        {{ range $key, $value := .Params.revealoptions }}
+		        {{ $key | safeHTML}}:{{$value }},
+		        {{ end }}
+		        // theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+		        // Optional libraries used to extend on reveal.js
+		        dependencies: [
+		          { src: '{{ .Site.BaseURL }}{{"/lib/reveal.js/lib/js/classList.js"}}"', condition: function() { return !document.body.classList; } },
+		          { src: '{{ .Site.BaseURL }}{{"/lib/reveal.js/plugin/markdown/marked.js"}}', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+		          { src: '{{ .Site.BaseURL }}{{"/lib/reveal.js/plugin/markdown/markdown.js"}}', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+		          { src: '{{ .Site.BaseURL }}{{"/lib/reveal.js/plugin/highlight/highlight.js"}}', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+		          { src: '{{ .Site.BaseURL }}{{"/lib/reveal.js/plugin/zoom-js/zoom.js"}}', async: true, condition: function() { return !!document.body.classList; } },
+		          { src: '{{ .Site.BaseURL }}{{"/lib/reveal.js/plugin/notes/notes.js"}}', async: true, condition: function() { return !!document.body.classList; } }
+		        ]
+		      });
+	</script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+<div class="row wb-eqht">
+{{ $url := .Get "url" }}
+{{ range getJSON $url }}
+{{ $p := . }}
+<div class="col-md-6 hght-inhrt">
+<div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="mrgn-tp-0 panel-title">{{ $p.name }}</h3>
+    </div>
+    <div class="panel-body">
+      <p>{{ $p.full_name }}</p>
+      <p>Size: {{$p.size}} Bytes</p>
+    </div>
+  </div>
+</div>
+{{ end }}
+</div>

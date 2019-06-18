@@ -1,0 +1,58 @@
+{{ define "main" }}
+
+    {{- partial "skipnav.html" . -}}
+
+    {{- partial "header.html" . -}}
+
+    <main property="mainContentOfPage" class="container">
+
+        {{- partial "components/header.html" . -}}
+
+        <h1 id="wb-cont">{{.Title}}</h1>
+
+        {{- partial "components/toc.html" . -}}
+
+        <h2>Related</h2>
+
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th class="col-sm-2" scope="col">Page</th>
+                    <th class="col-sm-2" scope="col">Last Update</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                    {{ range sort (where .Site.Pages "Section" .Section) ".Params.weight" }}
+                    {{ if eq .Parent.RelPermalink "/digital-academy/cncf/" }}
+                        <tr>
+                            <td><a href="{{ .Permalink }}">{{ .Title }}</a></td>
+                            <td>{{ .Lastmod.Format "January 2, 2006" }}</td>
+                        </tr>
+                    {{ end }}
+                    {{ end }}
+                </tbody>
+            </table>
+        </div>
+
+        {{ range .Pages }}
+
+            <p>PAGES:</p>
+            {{/* The context, ".", is now each one of the pages as it goes through the loop */}}
+
+            {{ printf "%#v" . }}
+
+            {{ end }}
+
+        {{ .Content }}
+
+        {{- partial "components/footer.html" . -}}
+
+        {{- partial "mainfooter.html" . -}}
+
+    </main>
+
+    {{- partial "footer.html" . -}}
+
+{{ end }}

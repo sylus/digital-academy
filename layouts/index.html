@@ -1,0 +1,106 @@
+{{ define "main" }}
+
+    {{- partial "skipnav.html" . -}}
+
+    {{- partial "header.html" . -}}
+
+    <main property="mainContentOfPage" class="container">
+
+            <h1 property="name" id="wb-cont">Kubernetes and CNCF Ecosystem</h1>
+
+            <p><strong>From <a href="https://www.csps-efpc.gc.ca/index-eng.aspx">[Digital Academy]</a></strong></p>
+
+            <section>
+                <h2>Interactive Learning Environment</h2>
+                <p>For our labs, we utilize <a href="https://katacoda.com">Katacoda</a>. Katacoda is a platform that enables you to run Docker and Kubernetes in your web browser. Each lab has multiple steps where we'll explain concepts and how you can utilize them in Kubernetes.</p>
+                <blockquote>All of our labs are located at this <a href="https://katacoda.com/sylus">Profile</a>.</blockquote>
+            </section>
+
+            <section>
+                <h2>Curriculum</h2>
+
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th class="col-sm-2" scope="col">Feature</th>
+                            <th class="col-sm-4" scope="col">Description</th>
+                            <th class="col-sm-2" scope="col">Last Update</th>
+                            <th class="col-sm-2" scope="col">Section</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                            {{ range sort (where .Site.Pages "Params.featureconfig" "!=" nil) ".Params.featureconfig.weight" }}
+
+                                <tr>
+                                    <td><a href="{{ .Permalink }}">{{ .Params.featureconfig.title }}</a></td>
+                                    <td>{{ .Params.featureconfig.description }}</td>
+                                    <td>{{ .Lastmod.Format "January 2, 2006" }}</td>
+                                    <td>
+                                        {{ if eq .Params.featureconfig.status "Statistics Canada" }}
+                                            <span class="label label-danger">{{ .Params.featureconfig.status }}</span>
+                                        {{ else if eq .Params.featureconfig.status "Kubernetes" }}
+                                            <span class="label label-primary">{{ .Params.featureconfig.status }}</span>
+                                        {{ else if eq .Params.featureconfig.status "Containers" }}
+                                            <span class="label label-success">{{ .Params.featureconfig.status }}</span>
+                                        {{ else if eq .Params.featureconfig.status "Katacoda" }}
+                                            <span class="label label-warning">{{ .Params.featureconfig.status }}</span>
+                                        {{ else }}
+                                        <span class="label label-default">{{ .Params.featureconfig.status }}</span>
+                                        {{ end }}
+                                    </td>
+                                </tr>
+
+                            {{ end }}
+
+                        </tbody>
+                    </table>
+                </div>
+
+                <section>
+
+                    <h3>Status Descriptions</h3>
+
+                    <dl class="row">
+                        <dt class="col-sm-3">
+                            <span class="label label-danger">Statistics Canada</span>
+                        </dt>
+                        <dd class="col-sm-9">
+                            <p>Information related to work done at Statistics Canada.</p>
+                        </dd>
+
+                        <dt class="col-sm-3">
+                            <span class="label label-warning">Katacoda</span>
+                        </dt>
+                        <dd class="col-sm-9">
+                            <p>Information related to the Katacoda Integrated Learning Environment.</p>
+                        </dd>
+
+                        <dt class="col-sm-3">
+                            <span class="label label-success">Container</span>
+                        </dt>
+                        <dd class="col-sm-9">
+                            <p>Information related to the subject of Containerization.</p>
+                        </dd>
+
+                        <dt class="col-sm-3">
+                            <span class="label label-primary">Kubernetes</span>
+                        </dt>
+                        <dd class="col-sm-9">
+                            <p>Information related to Kubernetes and the CNCF eco-system.</p>
+                        </dd>
+
+                    </dl>
+
+                </section>
+
+            </section>
+
+        {{- partial "mainfooter.html" . -}}
+
+    </main>
+
+    {{- partial "footer.html" . -}}
+
+{{ end }}

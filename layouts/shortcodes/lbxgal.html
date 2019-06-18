@@ -1,0 +1,26 @@
+<section class="wb-lbx lbx-gal">
+    {{- with (.Get "dir") -}}
+        {{- $files := readDir (print "/static/" .) }}
+        <ul class="list-inline">
+        {{- range $files -}}
+            {{- $thumbext := $.Get "thumb" | default "-thumb" }}
+            {{- $isthumb := .Name | findRE ($thumbext | printf "%s\\.") }}
+            {{- $isimg := lower .Name | findRE "\\.(gif|jpg|jpeg|tiff|png|bmp)" }}
+            {{- if and $isimg (not $isthumb) }}
+                {{- $caption :=  .Name | replaceRE "\\..*" "" | humanize }}
+                {{- $linkURL := print ($.Get "dir") "/" .Name | absURL }}
+                {{- $thumb := .Name | replaceRE "(\\.)" ($thumbext | printf "%s.") }}
+                {{- $thumbexists := where $files "Name" $thumb }}
+                {{- $thumbURL := print ($.Get "dir") "/" $thumb | absURL }}
+                <li>
+                    <a href="{{ $linkURL }}" title="{{ $caption }}">
+                        <img src="{{ if $thumbexists }}{{ $thumbURL }}{{ else }}{{ $linkURL }}{{ end }}" alt="{{ $caption }}" class="thumbnail" />
+                    </a>
+                </li>
+            {{- end }}
+        {{- end }}
+        </ul>
+    {{- else -}}
+        {{ .Inner }}
+    {{- end }}
+</section>

@@ -1,0 +1,25 @@
+baseURL: 'https://sylus.ca/digital-academy/'
+languageCode: en
+title: 'Statistics Canada'
+disableKinds:
+  - RSS
+  - taxonomy
+  - taxonomyTerm
+  - sitemap
+theme: aurora
+defaultContentLanguageInSubdir: true
+languages:
+  en:
+    contentDir: content/en
+    languageName: English
+    weight: 10
+pygmentsCodefences: true
+enableEmoji: true
+
+menu:
+  main:
+  - identifier: github
+    name: GitHub
+    pre: <i class='fa fa-github'></i>
+    url: https://github.com/statcan/statcan
+    weight: -110

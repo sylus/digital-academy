@@ -1,0 +1,22 @@
+image: registry.gitlab.com/pages/hugo:0.53
+
+test:
+  script:
+  - apk --update add git nodejs nodejs-npm
+  - cd themes && git clone https://github.com/sylus/aurora-hugo.git aurora
+  - cd ..
+  - hugo
+  except:
+  - master
+
+pages:
+  script:
+  - apk --update add git nodejs nodejs-npm
+  - cd themes && git clone https://github.com/sylus/aurora-hugo.git aurora
+  - cd ..
+  - hugo
+  artifacts:
+    paths:
+    - public
+  only:
+  - master

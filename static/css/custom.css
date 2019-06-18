@@ -1,0 +1,113 @@
+/* Please override here. */
+
+.post-content h1,
+.post-content h2,
+.post-content h3,
+.post-content h4,
+.post-content h5 {
+    margin-top: 15px;
+}
+
+#chart_placeholder {
+  text-align: center;
+  margin: 0px 0px;
+}
+.dependencyWheel {
+  font: 10px sans-serif;
+}
+
+.toggle-custom .glyphicon-plus:before {
+  color: #5c5c5c;
+}
+.toggle-custom[aria-expanded='true'] .glyphicon-plus:before {
+  content: "\2212";
+}
+
+iframe {
+  margin: 20px;
+}
+
+img[src$='#center'] {
+    display: block;
+    margin: 0.7rem auto;
+    padding: 4px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    -webkit-transition: all 0.2s ease-in-out;
+    transition: all 0.2s ease-in-out;
+}
+
+img[src$='#floatleft'] {
+    float:left;
+    margin: 0.7rem;
+    padding: 4px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    -webkit-transition: all 0.2s ease-in-out;
+    transition: all 0.2s ease-in-out;
+}
+
+img[src$='#floatright'] {
+    float:right;
+    margin: 0.7rem;
+    padding: 4px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    -webkit-transition: all 0.2s ease-in-out;
+    transition: all 0.2s ease-in-out;
+}
+
+#slide-agenda ol {
+  font-size: 1.5em;
+  margin: 50px 0px 0px 0px;
+}
+
+#slide-agenda ol ul {
+  line-height: 1.5em;
+  margin-top: 20px;
+  padding: 0px 0px 0px 20px;
+  list-style-type: none;
+}
+
+.reveal h1 {
+  font-size: 2em;
+}
+
+#devs ul {
+  margin-top: 2em;
+  list-style-type: none;
+}
+
+#migration span ul {
+  padding-top: 0.5em;
+  padding-left: 1em;
+}
+
+.reveal .slides > section > #d3 {
+  padding: 0px;
+}
+
+#d3 svg text {
+  fill: #FFF;
+  font-weight: bold;
+}
+
+#profiles ul {
+  margin: 20px 0px;
+}
+
+#how-to-use img,
+.reveal section img{
+  margin-top: none;
+  background: none !important;
+  border:none !important;
+  box-shadow:none !important;
+}
+
+#TableOfContents > ul {
+  list-style-type: none;
+  padding-left: 0px;
+}

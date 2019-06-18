@@ -1,0 +1,34 @@
+{
+  "name": "statcan-website",
+  "version": "0.0.1",
+  "description": "Course provided by the Digital Academy under the Canada School of Public Service.",
+  "main": "",
+  "dependencies": {
+	"reveal": "^0.0.4",
+	"font-awesome": "^4.7.0",
+	"@gctools-components/aurora-ds": "^0.3.3"
+  },
+  "devDependencies": {},
+  "author": "William Hearn",
+  "license": "MIT",
+  "keywords": [
+    "canada",
+    "statcan",
+    "wxt"
+  ],
+  "scripts": {
+    "postinstall": "node -e \"try { require('fs').symlinkSync(require('path').resolve('node_modules/@frontend'), 'static/lib', 'junction') } catch (e) { }\"",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://sylus@github.com/cloudops/cloudops.git"
+  },
+  "bugs": {
+    "url": "https://github.com/cloudops/cloudops"
+  },
+  "homepage": "https://github.com/cloudops/cloudops",
+  "engines": {
+    "yarn": ">= 1.0.0"
+  }
+}
