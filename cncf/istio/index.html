@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<!--[if lt IE 9]><html class="no-js lt-ie9" lang="en" dir="ltr">><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en"  >
+<!--<![endif]-->
+    <head>
+
+        <meta charset="utf-8">
+        <meta content="width=device-width,initial-scale=1" name="viewport">    
+    <!-- Web Experience Toolkit (WET) / Boîte à outils de l'expérience Web (BOEW)
+            wet-boew.github.io/wet-boew/License-en.html / wet-boew.github.io/wet-boew/Licence-fr.html -->
+    <title>Istio</title>        
+        <meta name="description" content="">    
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js" type="text/javascript"></script>
+    <script>var custom_styling = document.createElement("script");</script>
+    
+    <link href="/digital-academy/lib/@gctools-components/aurora-ds/css/aurora.min.css" rel="stylesheet" type="text/css">
+    
+    <link href="/digital-academy/lib/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+</head>
+    <body vocab="http://schema.org/" typeof="WebPage">    
+    <script src="/digital-academy/lib/@gctools-components/aurora-ds/js/aurora.min.js" type="text/javascript"></script>
+
+            <ul class ="sr-only">
+                <li class="wb-slc">
+                    <a class="wb-sl" href="#wb-cont">
+                        
+                            Skip to main content
+                        
+                    </a>
+                </li>
+                <li class="wb-slc">
+                    <a class="wb-sl" href="#wb-info">
+                        
+                            Skip to "About government"
+                        
+                    </a>
+                </li>
+            </ul>
+
+        <header>
+            <nav class="main-nav navbar navbar-expand bg-white" typeof="SiteNavigationElement">
+    <div class="navbar-collapse nav-holder">
+        <ul class="mx-auto nav-site scroll nav nav-tabs" style="border-bottom: none;">
+            
+            
+            
+            <li class="nav-item">
+            <a class="nav-link" href="https://github.com/statcan/statcan">
+                <i class='fa fa-github'></i>
+                <span>GitHub</span>
+            </a>
+            
+            </li>
+            
+        </ul>
+    </div>
+</nav>
+
+            <nav aria-label="breadcrumb">
+                <h2 class="sr-only">You are here:</h2>
+                <div class="container">
+                    
+                    
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="https://sylus.ca/digital-academy/">Home</a></li>
+                        
+                            <li class="breadcrumb-item">&nbsp;Istio</li>
+                        
+                    </ol>
+                </div>
+            </nav>
+        </header>
+<main property="mainContentOfPage" class="container"><link rel="stylesheet" href="https://sylus.ca/digital-academy//css/custom.css">
+<h1 id="wb-cont">Istio</h1><div class="row mrgn-tp-lg">
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-6 col-sm-6">
+                <div id="toc" class="panel panel-default">
+                    <header class="panel-heading">
+                        <h2 class="h4 mrgn-tp-0">Table of Contents</h2>
+                    </header>
+                    <div class="panel-body">
+                        <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#interactive-learning-environment">Interactive Learning Environment</a></li>
+<li><a href="#benefits">Benefits</a></li>
+<li><a href="#architecture">Architecture</a></li>
+</ul></li>
+</ul>
+</nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+        
+
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe src="//www.youtube.com/embed/1iyFq2VaL5Y" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
+</div>
+
+
+<h2 id="interactive-learning-environment">Interactive Learning Environment</h2>
+
+<p>In this lab, we will examine the Docker CLI and execute our first container.</p>
+
+<ul>
+<li><a href="https://katacoda.com/sylus/courses/kubernetes-cncf/module-5">Kubernetes CNCF: Module 5 - Istio</a></li>
+</ul>
+
+<blockquote>
+<p>All of our labs are powered by <a href="https://katacoda.com">Katacoda</a> and are located at this <a href="https://katacoda.com/sylus">Profile</a>.</p>
+</blockquote>
+
+<p>When building microservice based application, a myriad of complexities arises, we need Service Discovery, Load balancing, Application resilience, Optimization of hardware utilization to name just a few. And as the application grows it gets progressively worse. Kubernetes providing a solution to these complexities was immediately well received and reached a wide adoption in all cloud computing service providers.</p>
+
+<p>This simplification of Orchestrating Microservices enables teams to easily get to ten and then even more services, which causes a different set of problems, for example:</p>
+
+<ul>
+<li><strong>Traffic management</strong>: Timeouts, retries, canary rollouts,</li>
+<li><strong>Security</strong>: End-user Authentication and Authorization,</li>
+<li><strong>Observability</strong>: Tracing, monitoring, and logging.</li>
+</ul>
+
+<p>All of these can be solved and implemented in the application layer. But that’s an additional effort for the developer and a strain in the company’s resources. Resources that can and should be used to deliver business value to the customers. Istio take it away!</p>
+
+<p>Istio is an Open Source project (developed in partnership between teams from Google, IBM, and Lyft) that solves all the above-mentioned problems, it is battle proven, as similar solutions have been used by these companies internally.</p>
+
+<h2 id="benefits">Benefits</h2>
+
+<p>Istio provides an ingenious solution to all the above-mentioned requirements. The gist of Istio is to be completely separated from the services and act only by intercepting all network communication. And it turns out that by intercepting network communication it can implement:</p>
+
+<ul>
+<li><strong>Fault Tolerance</strong> – Using response status codes know when a request failed and retry.</li>
+<li><strong>Canary Rollouts</strong> – Forward only the specified percentage of requests to a service.</li>
+<li><strong>Monitoring and Metrics</strong> – The time it took for a service to respond.</li>
+<li><strong>Tracing and Observability</strong> – It adds special headers in every request and traces them in the cluster.</li>
+<li><strong>Security</strong> – Extracts the JWT Token and Authenticates and Authorizes users.</li>
+</ul>
+
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe src="//www.youtube.com/embed/oMf7jH1E3s0" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
+</div>
+
+
+<h2 id="architecture">Architecture</h2>
+
+<p>Istio needs to intercept all the network communication to and from every service and apply a set of rules. This is achieved and logically split into two planes: <code>The Data Plane</code> and <code>The Control Plane</code>.</p>
+
+<!-- Links Referenced -->
+</main>
+        
+            <footer id="wb-info">
+                <div class="landscape">
+                    <nav class="container wb-navcurr">
+                        <h2 class="invisible">About Aurora</h2>
+                    </nav>
+                </div>
+            </footer>
+        
+</body>
+</html>

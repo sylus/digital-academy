@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<!--[if lt IE 9]><html class="no-js lt-ie9" lang="en" dir="ltr">><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en"  >
+<!--<![endif]-->
+    <head>
+
+        <meta charset="utf-8">
+        <meta content="width=device-width,initial-scale=1" name="viewport">    
+    <!-- Web Experience Toolkit (WET) / Boîte à outils de l'expérience Web (BOEW)
+            wet-boew.github.io/wet-boew/License-en.html / wet-boew.github.io/wet-boew/Licence-fr.html -->
+    <title>Deploying Windows Apps with Kubernetes</title>        
+        <meta name="description" content="">    
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js" type="text/javascript"></script>
+    <script>var custom_styling = document.createElement("script");</script>
+    
+    <link href="/digital-academy/lib/@gctools-components/aurora-ds/css/aurora.min.css" rel="stylesheet" type="text/css">
+    
+    <link href="/digital-academy/lib/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+</head>
+    <body vocab="http://schema.org/" typeof="WebPage">    
+    <script src="/digital-academy/lib/@gctools-components/aurora-ds/js/aurora.min.js" type="text/javascript"></script>
+
+            <ul class ="sr-only">
+                <li class="wb-slc">
+                    <a class="wb-sl" href="#wb-cont">
+                        
+                            Skip to main content
+                        
+                    </a>
+                </li>
+                <li class="wb-slc">
+                    <a class="wb-sl" href="#wb-info">
+                        
+                            Skip to "About government"
+                        
+                    </a>
+                </li>
+            </ul>
+
+        <header>
+            <nav class="main-nav navbar navbar-expand bg-white" typeof="SiteNavigationElement">
+    <div class="navbar-collapse nav-holder">
+        <ul class="mx-auto nav-site scroll nav nav-tabs" style="border-bottom: none;">
+            
+            
+            
+            <li class="nav-item">
+            <a class="nav-link" href="https://github.com/statcan/statcan">
+                <i class='fa fa-github'></i>
+                <span>GitHub</span>
+            </a>
+            
+            </li>
+            
+        </ul>
+    </div>
+</nav>
+
+            <nav aria-label="breadcrumb">
+                <h2 class="sr-only">You are here:</h2>
+                <div class="container">
+                    
+                    
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="https://sylus.ca/digital-academy/">Home</a></li>
+                        
+                            <li class="breadcrumb-item">&nbsp;Deploying Windows Apps with Kubernetes</li>
+                        
+                    </ol>
+                </div>
+            </nav>
+        </header>
+<main property="mainContentOfPage" class="container"><link rel="stylesheet" href="https://sylus.ca/digital-academy//css/custom.css">
+<h1 id="wb-cont">Deploying Windows Apps with Kubernetes</h1><div class="row mrgn-tp-lg">
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-6 col-sm-6">
+                <div id="toc" class="panel panel-default">
+                    <header class="panel-heading">
+                        <h2 class="h4 mrgn-tp-0">Table of Contents</h2>
+                    </header>
+                    <div class="panel-body">
+                        <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#windows-and-kubernetes">Windows and Kubernetes</a></li>
+<li><a href="#roadmap">Roadmap</a></li>
+<li><a href="#building-windows-containers">Building Windows Containers</a>
+<ul>
+<li><a href="#kernel-user-compatibility">Kernel / User compatibility</a></li>
+<li><a href="#nuget">NuGet</a></li>
+<li><a href="#csproj">*.csproj</a></li>
+<li><a href="#configuration">Configuration</a></li>
+<li><a href="#dockerfile">Dockerfile</a>
+<ul>
+<li><a href="#wcf">WCF</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#building-hybrid-clusters">Building Hybrid Clusters</a>
+<ul>
+<li><a href="#aks-engine-cluster-definition">AKS Engine Cluster Definition</a></li>
+</ul></li>
+<li><a href="#orchestration">Orchestration</a>
+<ul>
+<li><a href="#considerations">Considerations</a></li>
+</ul></li>
+<li><a href="#release-automation">Release Automation</a>
+<ul>
+<li><a href="#jenkins">Jenkins</a>
+<ul>
+<li><a href="#jenkinsfile">Jenkinsfile</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#developer-perspective">Developer Perspective</a>
+<ul>
+<li><a href="#anti-patterns">Anti-Patterns</a></li>
+</ul></li>
+<li><a href="#debugging">Debugging</a></li>
+<li><a href="#debugging-windows-container-with-docker-compose">Debugging Windows Container with Docker Compose</a></li>
+<li><a href="#debugging-windows-nodes">Debugging Windows Nodes</a></li>
+<li><a href="#help">Help</a></li>
+<li><a href="#referenced-links-in-order-they-appear">Referenced Links (In order they appear)</a></li>
+</ul></li>
+</ul>
+</nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+        
+
+<h2 id="windows-and-kubernetes">Windows and Kubernetes</h2>
+
+<p>Windows has now reached production level support for Windows nodes as of Kubernetes v1.14. Due to this we can support various types of Windows workloads in a container and consequently to run in Kubernetes cluster. During the course of this presentation, we&rsquo;ll go over some of the key considerations such as handling secrets, required node selectors, and other common differences you may encounter in clusters with Windows &amp; Linux nodes.</p>
+
+<p>Once the fundamentals are in place we can then move on to setting up the full developer workflow where we will go over how to create a new app using both .NET Framework (WCF, Console, MVC) and .NET Core using the various tools at our disposal.</p>
+
+<p>This includes a discussion of the following tools:</p>
+
+<ul>
+<li><a href="https://draft.sh/">Draft</a></li>
+<li><a href="https://helm.sh/">Helm</a></li>
+<li><a href="https://jenkins.io/">Jenkins</a></li>
+<li><a href="https://octopus.com">Octopus</a></li>
+<li><a href="https://jfrog.com/artifactory/">Artifactory</a> / <a href="https://jfrog.com/xray/">XRay</a></li>
+</ul>
+
+<h2 id="roadmap">Roadmap</h2>
+
+<p>There has been significant work on getting Kubernetes to support Windows applications and much of the heavy lifting has been done by Microsoft. This is why Azure is the only CSP at the moment to support Windows workloads in Kubernetes.</p>
+
+<table>
+<thead>
+<tr>
+<th>2016-2017</th>
+<th>2017-2018</th>
+<th>2018-2019</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>Containers in Windows Server (preview)</td>
+<td>Parity with core k8s features (configmap, pvc, dns resolution)</td>
+<td>Windows Server 2019 / 1809</td>
+</tr>
+
+<tr>
+<td>SIG-Windows formed (Apprenda, TicketMaster, Docker, Huawei, etc)</td>
+<td>Networking (CNI) and storage improved in k8s 1.6 - 1.10</td>
+<td>Product preview coming (AKS, Docker, RedHat)</td>
+</tr>
+
+<tr>
+<td>Kubernetes 1.5 alpha using Windows Server 2016</td>
+<td>Windows Server 1709 / 1803 (number of containers + patch)</td>
+<td>Testing, docs for v1.13+ and stable for v1.14</td>
+</tr>
+</tbody>
+</table>
+
+<blockquote>
+<p>Note: Windows Server 1709 / 1803 currently need patches to address issues with larger numbers of containers</p>
+</blockquote>
+
+<h2 id="building-windows-containers">Building Windows Containers</h2>
+
+<ul>
+<li>Nuget Restore -&gt; Build solution -&gt; Image build -&gt; Package -&gt; Deploy</li>
+<li>Common Core / Proper Dependency Handling</li>
+<li>Single repo for separate functionality</li>
+</ul>
+
+<h3 id="kernel-user-compatibility">Kernel / User compatibility</h3>
+
+<ul>
+<li>Windows kernel major version needs to match</li>
+<li>If built on Windows Server 2019 then must run on same version</li>
+<li>Hyper-V isolation can run older containers on a newer node</li>
+</ul>
+
+<h3 id="nuget">NuGet</h3>
+
+<ul>
+<li>NuSpec -&gt; NuGet -&gt; Package.config</li>
+<li>Encrypted Key</li>
+<li>Common Core DLL&rsquo;s pulled in</li>
+<li>Don&rsquo;t store dependencies, only source code</li>
+</ul>
+
+<p>The NuGet.config file should have the following added to it if leveraging Artifactory:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">&lt;add key<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;ArtifactoryNuGetV3&#34;</span> value<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;https://&lt;domain&gt;/artifactory/api/nuget/v3/nuget&#34;</span> protocolVersion<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;3&#34;</span> /&gt;</code></pre></div>
+<p>Then to authenticate against Artifactory with the NuGet Encrypted API key, run the following command:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">nuget setapikey &lt;USERNAME&gt;:&lt;PASSWORD&gt; -Source ArtifactoryNuGetV3</code></pre></div>
+<p>To configure the NuGet Visual Studio Extension to use Artifactory, you need to add this repository as another Package Source under Nuget Package Manager.</p>
+
+<p><code>Tools &gt; NuGet Package Manager &gt; Settings &gt; Package Sources</code></p>
+
+<ol>
+<li>Go to the &ldquo;Package Manager Settings&rdquo;</li>
+<li>Add a custom name for the package source</li>
+<li>Follow the steps mentioned above</li>
+</ol>
+
+<h3 id="csproj">*.csproj</h3>
+
+<p>Depending on the project type and architecture you might need to modify the *.csproj file.</p>
+
+<ul>
+<li>Support all types of builds (CLI, Visual Studio, Docker)</li>
+<li>In-place building + publishing profile</li>
+<li>No relative includes</li>
+<li>Only use assembly references needed</li>
+</ul>
+
+<h3 id="configuration">Configuration</h3>
+
+<ul>
+<li>Environment variables passed at runtime</li>
+<li>Proper overrides of web.config and related configuration</li>
+<li>Leverage KeyVault for connection strings, etc (easily change environments)</li>
+</ul>
+
+<p>Where possible you should never bake your configuration settings inside your docker container. A much better approach is to supply the transformation at the time of container startup.</p>
+
+<p>One of the biggest benefits of using containers is the ability to wrap your application and its dependencies into an immutable image. This image is built once and deployed to different environments as it progresses through a continuous delivery pipeline.</p>
+
+<p>As the application is deployed, we can then pass variables or mount configuration files into the container to configure it for the given environment. This ensures that we deploy the exact same application to production as the one tested in other environments. This approach also helps keep secrets out of container images.</p>
+
+<ul>
+<li><a href="https://anthonychu.ca/post/aspnet-web-config-transforms-windows-containers-revisited/">Legacy Support</a></li>
+<li><a href="https://fluentbytes.com/override-classic-asp-net-web-config-configuration-settings-when-using-docker-containers/">Configuration Builder</a></li>
+</ul>
+
+<h3 id="dockerfile">Dockerfile</h3>
+
+<ul>
+<li>Multi-stage build (keep final image small)</li>
+<li>Types of base images (sdk, runtime)</li>
+<li>Handling IIS webservers</li>
+<li>MSBuild Parameters and Publish Profiles
+
+<ul>
+<li>Difference between msbuild and dotnet (cli)</li>
+<li>4.6.1+ needs msbuild because dotnet doesn&rsquo;t compile</li>
+</ul></li>
+<li>Dockerignore (ensure Docker does all the building)</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">bin
+obj
+packages
+Dockerfile
+Jenkinsfile</code></pre></div>
+<p>There are a variety of supported Windows environments:</p>
+
+<ul>
+<li>Windows Server 2016</li>
+<li>Windows Server 1803</li>
+<li>Windows Server 1809</li>
+<li>Windows Server 2019</li>
+</ul>
+
+<p>For each of the Windows environments you have the supported targets:</p>
+
+<ul>
+<li>dotnet (microsoft/dotnet-framework:4.7.2-runtime)</li>
+<li>aspnet (microsoft/aspnet:4.7.2 AS runtime)</li>
+<li>wcf (microsoft/wcf:4.7.2 AS runtime)</li>
+</ul>
+
+<p>The following is an example of a full Dockerfile for working with WCF.</p>
+
+<h4 id="wcf">WCF</h4>
+
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-dockerfile" data-lang="dockerfile"><span style="color:#75715e"># escape=`</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># WCF Server 1803</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">FROM</span><span style="color:#e6db74"> &lt;domain&gt;:443/docker-remote/microsoft/dotnet-framework:4.7.2-sdk AS build</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">WORKDIR</span><span style="color:#e6db74"> /app</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># Build and package dotnet app</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span>COPY . .<span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">RUN</span> nuget restore<span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">RUN</span> msbuild /p:Configuration<span style="color:#f92672">=</span>Release /p:DeployOnBuild<span style="color:#f92672">=</span>true /p:PublishProfile<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;FolderProfile.pubxml&#34;</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># Multi stage build</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">FROM</span><span style="color:#e6db74"> &lt;domain&gt;:443/docker-remote/microsoft/wcf:4.7.2-windowsservercore-1803 as runtime</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">RUN</span> MKDIR AuditLog<span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">WORKDIR</span><span style="color:#e6db74"> AuditLog</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span>COPY --from<span style="color:#f92672">=</span>build /app/bin/Release/Publish ./<span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># Configuration of the new site in IIS</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">RUN</span> powershell -NoProfile -Command <span style="color:#e6db74">`</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span>    Import-module IISAdministration; <span style="color:#e6db74">`</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span>    New-IISSite -Name <span style="color:#e6db74">&#34;AuditLog&#34;</span> -PhysicalPath C:<span style="color:#ae81ff">\S</span>cripts<span style="color:#ae81ff">\A</span>uditLog -BindingInformation <span style="color:#e6db74">&#34;*&#34;</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">EXPOSE</span><span style="color:#e6db74"> 83</span></code></pre></div>
+
+<h2 id="building-hybrid-clusters">Building Hybrid Clusters</h2>
+
+<ul>
+<li>Apps across multiple nodes + operating systems</li>
+<li>Same workflow regardless of node (api, kubectl, helm)</li>
+<li>Manage Linux from Windows, and Windows from Linux</li>
+<li>Same supporting container infrastructure (container registries)</li>
+</ul>
+
+<p>There are currently two ways to leverage Windows workloads in Kubernetes on Azure. For the purposes of this presentation we will only be talking about how to use AKS Engine.</p>
+
+<ol>
+<li>Leverage AKS-Engine</li>
+<li>Manually add a Windows virtual machine to the cluster</li>
+</ol>
+
+<blockquote>
+<p>Note: Managed AKS with Windows support should be general availability by the end of March 2019.</p>
+</blockquote>
+
+<h3 id="aks-engine-cluster-definition">AKS Engine Cluster Definition</h3>
+
+<p>The following snippet is the initial cluster definition we pass to AKS Engine in order for it to generate the complete ARM deployments along with the configuration that Kubernetes expects.</p>
+
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
+  <span style="color:#f92672">&#34;apiVersion&#34;</span>: <span style="color:#e6db74">&#34;vlabs&#34;</span>,
+  <span style="color:#f92672">&#34;properties&#34;</span>: {
+    <span style="color:#f92672">&#34;orchestratorProfile&#34;</span>: {
+      <span style="color:#f92672">&#34;orchestratorType&#34;</span>: <span style="color:#e6db74">&#34;Kubernetes&#34;</span>,
+      <span style="color:#f92672">&#34;orchestratorRelease&#34;</span>: <span style="color:#e6db74">&#34;1.12&#34;</span>,
+      <span style="color:#f92672">&#34;kubernetesConfig&#34;</span>: {
+        <span style="color:#f92672">&#34;useManagedIdentity&#34;</span>: <span style="color:#66d9ef">true</span>,
+        <span style="color:#f92672">&#34;userAssignedID&#34;</span>: <span style="color:#e6db74">&#34;k8s-prod-msi&#34;</span>,
+        <span style="color:#f92672">&#34;enableDataEncryptionAtRest&#34;</span>: <span style="color:#66d9ef">true</span>,
+        <span style="color:#f92672">&#34;enableEncryptionWithExternalKms&#34;</span>: <span style="color:#66d9ef">true</span>,
+        <span style="color:#f92672">&#34;enableRbac&#34;</span>: <span style="color:#66d9ef">true</span>,
+        <span style="color:#f92672">&#34;privateCluster&#34;</span>: {
+          <span style="color:#f92672">&#34;enabled&#34;</span>: <span style="color:#66d9ef">true</span>
+        },
+        <span style="color:#f92672">&#34;networkPolicy&#34;</span>: <span style="color:#e6db74">&#34;azure&#34;</span>,
+        <span style="color:#f92672">&#34;enableRbac&#34;</span>: <span style="color:#66d9ef">true</span>,
+        <span style="color:#f92672">&#34;kubeletConfig&#34;</span>: {
+          <span style="color:#f92672">&#34;--allow-privileged&#34;</span>: <span style="color:#e6db74">&#34;true&#34;</span>,
+          <span style="color:#f92672">&#34;--anonymous-auth&#34;</span>: <span style="color:#e6db74">&#34;false&#34;</span>,
+          <span style="color:#f92672">&#34;--max-pods&#34;</span>: <span style="color:#e6db74">&#34;60&#34;</span>,
+          <span style="color:#f92672">&#34;--network-plugin&#34;</span>: <span style="color:#e6db74">&#34;cni&#34;</span>
+        },
+        <span style="color:#f92672">&#34;gcHighThreshold&#34;</span>:<span style="color:#ae81ff">85</span>,
+        <span style="color:#f92672">&#34;gcLowThreshold&#34;</span>: <span style="color:#ae81ff">80</span>,
+        <span style="color:#f92672">&#34;apiServerConfig&#34;</span>: {
+          <span style="color:#f92672">&#34;--allow-privileged&#34;</span>: <span style="color:#e6db74">&#34;true&#34;</span>,
+          <span style="color:#f92672">&#34;--anonymous-auth&#34;</span>: <span style="color:#e6db74">&#34;false&#34;</span>,
+        },
+        <span style="color:#f92672">&#34;addons&#34;</span>: [
+          {
+            <span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;tiller&#34;</span>,
+            <span style="color:#f92672">&#34;enabled&#34;</span>: <span style="color:#66d9ef">true</span>
+          },
+          {
+            <span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;kubernetes-dashboard&#34;</span>,
+            <span style="color:#f92672">&#34;enabled&#34;</span>: <span style="color:#66d9ef">true</span>
+          },
+          {
+            <span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;container-monitoring&#34;</span>,
+            <span style="color:#f92672">&#34;enabled&#34;</span>: <span style="color:#66d9ef">true</span>
+          },
+          {
+            <span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;rescheduler&#34;</span>,
+            <span style="color:#f92672">&#34;enabled&#34;</span> : <span style="color:#66d9ef">true</span>
+          }
+        ]
+      }
+    },
+    <span style="color:#f92672">&#34;masterProfile&#34;</span>: {
+      <span style="color:#f92672">&#34;count&#34;</span>: <span style="color:#ae81ff">1</span>,
+      <span style="color:#f92672">&#34;dnsPrefix&#34;</span>: <span style="color:#e6db74">&#34;k8s-aks-production&#34;</span>,
+      <span style="color:#f92672">&#34;vmSize&#34;</span>: <span style="color:#e6db74">&#34;Standard_D4s_v3&#34;</span>,
+      <span style="color:#f92672">&#34;OSDiskSizeGB&#34;</span>: <span style="color:#ae81ff">200</span>,
+      <span style="color:#f92672">&#34;vnetSubnetId&#34;</span>: <span style="color:#e6db74">&#34;/subscriptions/&lt;subscription_id&gt;/resourceGroups/&lt;network_rg&gt;/providers/Microsoft.Network/virtualNetworks/&lt;vnet&gt;/subnets/Container-Rz-Master&#34;</span>,
+      <span style="color:#f92672">&#34;firstConsecutiveStaticIP&#34;</span>: <span style="color:#e6db74">&#34;XXX.XX.X.X&#34;</span>,
+      <span style="color:#f92672">&#34;vnetCidr&#34;</span>: <span style="color:#e6db74">&#34;XXX.XX.X.X/24&#34;</span>
+    },
+    <span style="color:#f92672">&#34;agentPoolProfiles&#34;</span>: [
+      {
+        <span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;linuxpool1&#34;</span>,
+        <span style="color:#f92672">&#34;count&#34;</span>: <span style="color:#ae81ff">2</span>,
+        <span style="color:#f92672">&#34;customNodeLabels&#34;</span>: {
+          <span style="color:#f92672">&#34;os&#34;</span>: <span style="color:#e6db74">&#34;linux&#34;</span>
+        },
+        <span style="color:#f92672">&#34;vmSize&#34;</span>: <span style="color:#e6db74">&#34;Standard_D8s_v3&#34;</span>,
+        <span style="color:#f92672">&#34;OSDiskSizeGB&#34;</span>: <span style="color:#ae81ff">200</span>,
+        <span style="color:#f92672">&#34;storageProfile&#34;</span> : <span style="color:#e6db74">&#34;ManagedDisks&#34;</span>,
+        <span style="color:#f92672">&#34;availabilityProfile&#34;</span>: <span style="color:#e6db74">&#34;AvailabilitySet&#34;</span>,
+        <span style="color:#f92672">&#34;vnetSubnetId&#34;</span>: <span style="color:#e6db74">&#34;/subscriptions/&lt;subscription_id&gt;/resourceGroups/&lt;network_rg&gt;/providers/Microsoft.Network/virtualNetworks/&lt;vnet&gt;/subnets/&lt;subnet&gt;&#34;</span>
+      },
+      {
+        <span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;windowspool1&#34;</span>,
+        <span style="color:#f92672">&#34;count&#34;</span>: <span style="color:#ae81ff">1</span>,
+        <span style="color:#f92672">&#34;customNodeLabels&#34;</span>: {
+          <span style="color:#f92672">&#34;os&#34;</span>: <span style="color:#e6db74">&#34;windows&#34;</span>
+        },
+        <span style="color:#f92672">&#34;osType&#34;</span>: <span style="color:#e6db74">&#34;Windows&#34;</span>,
+        <span style="color:#f92672">&#34;vmSize&#34;</span>: <span style="color:#e6db74">&#34;Standard_D8s_v3&#34;</span>,
+        <span style="color:#f92672">&#34;OSDiskSizeGB&#34;</span>: <span style="color:#ae81ff">200</span>,
+        <span style="color:#f92672">&#34;storageProfile&#34;</span> : <span style="color:#e6db74">&#34;ManagedDisks&#34;</span>,
+        <span style="color:#f92672">&#34;availabilityProfile&#34;</span>: <span style="color:#e6db74">&#34;AvailabilitySet&#34;</span>,
+        <span style="color:#f92672">&#34;vnetSubnetId&#34;</span>: <span style="color:#e6db74">&#34;/subscriptions/&lt;subscription_id&gt;/resourceGroups/&lt;network_rg&gt;/providers/Microsoft.Network/virtualNetworks/&lt;vnet&gt;/subnets/&lt;subnet&gt;&#34;</span>
+      }
+    ],
+    <span style="color:#f92672">&#34;linuxProfile&#34;</span>: {
+      <span style="color:#f92672">&#34;adminUsername&#34;</span>: <span style="color:#e6db74">&#34;azureuser&#34;</span>,
+      <span style="color:#f92672">&#34;ssh&#34;</span>: {
+        <span style="color:#f92672">&#34;publicKeys&#34;</span>: [
+          {
+            <span style="color:#f92672">&#34;keyData&#34;</span>: <span style="color:#e6db74">&#34;ssh-rsa ...&#34;</span>
+          }
+        ]
+      }
+    },
+    <span style="color:#f92672">&#34;windowsProfile&#34;</span>: {
+      <span style="color:#f92672">&#34;adminUsername&#34;</span>: <span style="color:#e6db74">&#34;azureuser&#34;</span>,
+      <span style="color:#f92672">&#34;adminPassword&#34;</span>: <span style="color:#e6db74">&#34;&lt;pass&gt;&#34;</span>
+    },
+    <span style="color:#f92672">&#34;servicePrincipalProfile&#34;</span>: {
+      <span style="color:#f92672">&#34;clientId&#34;</span>: <span style="color:#e6db74">&#34;&lt;client_id&gt;&#34;</span>,
+      <span style="color:#f92672">&#34;secret&#34;</span>: <span style="color:#e6db74">&#34;&lt;secret&gt;&#34;</span>,
+      <span style="color:#f92672">&#34;objectId&#34;</span>: <span style="color:#e6db74">&#34;&lt;object_id&gt;&#34;</span>
+    }
+  }
+}</code></pre></div>
+
+<blockquote>
+<p>Note: Remember to make sure that the Windows version you launch with is the same version you want to build and run your containers in.</p>
+</blockquote>
+
+<h2 id="orchestration">Orchestration</h2>
+
+<ul>
+<li>Helm Chart
+
+<ul>
+<li>How to write / generate a Helm Chart</li>
+<li>Showcase a few examples of what we wrote</li>
+</ul></li>
+</ul>
+
+<p>With our Windows Containers built and a Hybrid Kubernetes cluster instantiated we can now discuss how they can be successfully orchestrated in a distributed fashion.</p>
+
+<h3 id="considerations">Considerations</h3>
+
+<ul>
+<li>Need to consider where container runs if need a windows server node use node selector</li>
+<li>Option 1: Make use of taints and tolerations for Windows nodes</li>
+<li>Option 2: Update helm charts and yaml files</li>
+<li>Resource consumption: Need higher limits (300MB) as need windows background services</li>
+<li>AKS Engine: Issue with them where do they go, and check GitHub</li>
+</ul>
+
+<h2 id="release-automation">Release Automation</h2>
+
+<p><img src="/digital-academy/images/windows/cicd.png#center" alt="DevOps Pipeline" /></p>
+
+<ul>
+<li>Draft: Generate your skeleton</li>
+<li>Helm: Package manager</li>
+<li>Jenkins: Build process and push to container registry
+
+<ul>
+<li>How to write Jenkinsfile to support Windows + Linux</li>
+<li>JNLP for Windows + Linux and how to write</li>
+<li>Kubernetes Plugin (latest version)</li>
+</ul></li>
+<li>Octopus: Continuous deployment with business processes baked in</li>
+<li>Artifactory / XRay: Security scanning for containers against all known CVE&rsquo;s</li>
+<li>Securing cluster(s)</li>
+</ul>
+
+<h3 id="jenkins">Jenkins</h3>
+
+<p>We have built our own containerized Jenkins JNLP agent against Windows 1803 and using the <code>dotnet-framework</code> base image.</p>
+
+<p>Additionally leveraging chocolatey we have added a few other commonly required libraries.</p>
+
+<p>Repository: <a href="https://github.com/sylus/jenkins-jnlp-agent-windows">windows-jnlp-agent-windows</a></p>
+
+<h4 id="jenkinsfile">Jenkinsfile</h4>
+
+<p>The following is largely a fully complete <code>Jenkinsfile</code> tailored to work with Windows nodes inside a Kubernetes cluster.</p>
+
+<p>Simply replace the values below with your own configuration.</p>
+
+<blockquote>
+<p>Note: We makes use of the Kubernetes plugin where you can specify the specific cluster you wish to run CI tests against.</p>
+</blockquote>
+
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-groovy" data-lang="groovy"><span style="color:#66d9ef">def</span> label <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;jnlp-win-${UUID.randomUUID().toString()}&#34;</span>
+
+podTemplate<span style="color:#f92672">(</span>
+  cloud: <span style="color:#e6db74">&#39;&lt;k8s-cluster&gt;&#39;</span><span style="color:#f92672">,</span>
+  serviceAccount: <span style="color:#e6db74">&#39;jenkins-jenkins
+</span><span style="color:#e6db74">  label: label,
+</span><span style="color:#e6db74">  yaml: &#34;&#34;&#34;
+</span><span style="color:#e6db74">apiVersion: v1
+</span><span style="color:#e6db74">kind: Pod
+</span><span style="color:#e6db74">metadata:
+</span><span style="color:#e6db74">  labels:
+</span><span style="color:#e6db74">    ci: windows-vs2017
+</span><span style="color:#e6db74">spec:
+</span><span style="color:#e6db74">  containers:
+</span><span style="color:#e6db74">    - name: jnlp
+</span><span style="color:#e6db74">      image: &lt;docker-registry&gt;/jenkins/jenkins-ext:jnlp-windows
+</span><span style="color:#e6db74">      env:
+</span><span style="color:#e6db74">        - name: JENKINS_URL
+</span><span style="color:#e6db74">          value: &#39;</span>https:<span style="color:#75715e">//&lt;domain&gt;&#39;
+</span><span style="color:#75715e"></span>        <span style="color:#f92672">-</span> name: DOCKER_HOST
+          value: <span style="color:#e6db74">&#39;tcp://&lt;ipaddress&gt;:2375&#39;</span>
+      tty: <span style="color:#66d9ef">true</span>
+      working: <span style="color:#e6db74">&#39;C:\\workspace\\&#39;</span>
+  tolerations:
+    <span style="color:#f92672">-</span> effect: NoSchedule
+      key: os
+      operator: Equal
+      value: windows
+  nodeSelector:
+    agentpool: ciwinpool1
+<span style="color:#e6db74">&#34;&#34;&#34;
+</span><span style="color:#e6db74">) {
+</span><span style="color:#e6db74">    node (label) {
+</span><span style="color:#e6db74">      // Update the gitlab status to pending
+</span><span style="color:#e6db74">      // https://jenkins.io/doc/pipeline/steps/gitlab-plugin
+</span><span style="color:#e6db74">      updateGitlabCommitStatus name: &#39;build&#39;, state: &#39;pending&#39;
+</span><span style="color:#e6db74">
+</span><span style="color:#e6db74">      bat &#39;powershell.exe mkdir C:\\repo&#39;
+</span><span style="color:#e6db74">        dir(&#39;C:\\repo\\&#39;) {
+</span><span style="color:#e6db74">            checkout scm
+</span><span style="color:#e6db74">
+</span><span style="color:#e6db74">            withCredentials([usernamePassword(credentialsId: &#39;docker-pull&#39;, passwordVariable: &#39;pass&#39;, usernameVariable: &#39;user&#39;)]) {
+</span><span style="color:#e6db74">                bat &#34;</span>docker login <span style="color:#f92672">-</span>u $<span style="color:#f92672">{</span>user<span style="color:#f92672">}</span> <span style="color:#f92672">-</span>p $<span style="color:#f92672">{</span>pass<span style="color:#f92672">}</span> <span style="color:#f92672">&lt;</span>docker<span style="color:#f92672">-</span>registry<span style="color:#f92672">&gt;</span><span style="color:#e6db74">&#34;
+</span><span style="color:#e6db74">                bat &#34;</span>docker build <span style="color:#f92672">.</span> <span style="color:#f92672">-</span>t <span style="color:#f92672">&lt;</span>docker<span style="color:#f92672">-</span>registry<span style="color:#f92672">&gt;</span><span style="color:#e6db74">/&lt;repo-name&gt; --no-cache&#34;
+</span><span style="color:#e6db74">                bat &#34;docker push &lt;docker-registry&gt;/</span><span style="color:#f92672">&lt;</span>repo<span style="color:#f92672">-</span>name<span style="color:#f92672">&gt;</span><span style="color:#960050;background-color:#1e0010">&#34;</span>
+            <span style="color:#f92672">}</span>
+        <span style="color:#f92672">}</span>
+      bat <span style="color:#e6db74">&#39;powershell.exe remove-item C:\\repo -recurse -force&#39;</span>
+
+      <span style="color:#75715e">// Update the gitlab status to success
+</span><span style="color:#75715e"></span>      updateGitlabCommitStatus name: <span style="color:#e6db74">&#39;build&#39;</span><span style="color:#f92672">,</span> state: <span style="color:#e6db74">&#39;success&#39;</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span></code></pre></div>
+
+<h2 id="developer-perspective">Developer Perspective</h2>
+
+<ul>
+<li>Learn new scripting</li>
+<li>Learn groovy, powershell, azure cli</li>
+<li>Learn Docker + Visual Studio integration with docker</li>
+<li>Limit betwen DevOps + Docker and where the overlap is</li>
+<li>JenkinsFile or Similar CI</li>
+<li>Prepared to learn and read resources (we can provide)</li>
+<li>When should we go to .NET core
+
+<ul>
+<li>Performance</li>
+<li>Speed of delivery</li>
+<li>Density of Node</li>
+</ul></li>
+<li>3 types of Applications
+
+<ul>
+<li>WCF</li>
+<li>Console</li>
+<li>ASP.Net Web Application (should evaluate for this)</li>
+</ul></li>
+<li>Showstoppers
+
+<ul>
+<li>Related to Oracle (management DLL forget about .NET Core)</li>
+<li>Why don&rsquo;t move to managed, we are using UDT only support for this</li>
+</ul></li>
+<li>Once .NET core is achieved
+
+<ul>
+<li>Is way less complex so it is encourage</li>
+<li>For new projects should try to do .NET core (simplicity and stability of CI)</li>
+<li>Our project PMDAC was successful for this (web.config improvements)</li>
+<li>For existing project should access this, as runs better in Linux</li>
+<li>Densely pack the node more and build time is dramatically reduced</li>
+<li>Integration with Visual Studio</li>
+<li>Debug container directly in IDE, breakpoint</li>
+<li>Tested with .NET Core</li>
+<li>First class integration in VSCode / Visual Studio</li>
+</ul></li>
+<li>Building application with Dockerfile
+
+<ul>
+<li>If don&rsquo;t have automation process for deployment then use visual studio to generate</li>
+<li>We are doing it all in Dockerfile to keep all deps together</li>
+<li>Need to understand how to use it in CLI / multi staging</li>
+<li>Branching strategy, Layering</li>
+<li>Dependency on Windows 10, Docker for Windows (mandatory) (important)</li>
+</ul></li>
+<li>Agile Practies
+
+<ul>
+<li>Useful to have CI first</li>
+<li>When starting to fix issues, we can fail fast, fail often to succeed</li>
+<li>CI will reduce time for developers later on</li>
+<li>We use Jenkins -&gt; GitLab</li>
+</ul></li>
+<li>Separation of repositories
+
+<ul>
+<li>Helps to focus on task at hand</li>
+<li>Faciliates a micro-services oriented approach</li>
+<li>Challenge to refactor that</li>
+</ul></li>
+<li>DevOps and Developer perspective</li>
+<li>Ask them which people are coming and there background so we can tailor discussion</li>
+<li>Single Page application / Razor / Angular etc</li>
+<li>Traefik (https)</li>
+</ul>
+
+<h3 id="anti-patterns">Anti-Patterns</h3>
+
+<p>Right now it is unavoidable that the developer needs to learn a bit about Docker / Kubernetes in order to successfully deploy a Windows application on Kubernetes.</p>
+
+<p>However this can technically be classified as a anti-pattern as we should strive for the developer workflow to remain consistent and for the orchestration to be seamless without any developer intervention. This is one of the main goals of the KNative initiative which brings serverless functionality to Kubernetes.</p>
+
+<h2 id="debugging">Debugging</h2>
+
+<p>There a quite a few ways to debug Windows Containers and / or your Windows Node on Kubernetes. Additionally the problem scope differs based on the level of the stack where you are experience an issue.</p>
+
+<p>Always important to remember to start small and try to isolate the issue.</p>
+
+<p>Here is some useful information that might help you further troubleshoot.</p>
+
+<h2 id="debugging-windows-container-with-docker-compose">Debugging Windows Container with Docker Compose</h2>
+
+<p>Even though docker swarm is on the way out and being wholly replaced by Kubernetes, docker-compose itself on a single virtual machine can prove very useful in order to prove things work before deploying your applications into a distributed cluster.</p>
+
+<p>This is very useful for debugging as sometimes don&rsquo;t know where specific issues are in the cluster.</p>
+
+<ul>
+<li>Network Connectivity / Latency as everything is local</li>
+<li>Issues with Service Endpoints / Timeouts</li>
+<li>Memory / CPU issues</li>
+<li>Number of Windows Containers</li>
+</ul>
+
+<p>Another important fact is that if everything works in a local docker-compose environment, it is a safe bet your containers should also work in a Kubernetes cluster with certain caveats applied.</p>
+
+<h2 id="debugging-windows-nodes">Debugging Windows Nodes</h2>
+
+<ul>
+<li>How to debug Windows Containers</li>
+<li>SSH in to Windows Node</li>
+<li>How to read kubelet logs / journalctl</li>
+<li>Wireshark</li>
+<li>How to know which layer (Traefik)</li>
+<li>Often use a known working trivial example to test communication between services
+
+<ul>
+<li><a href="https://gitlab.k8s.cloud.statcan.ca/ndm-cloud-dotnetteam/pingservice">Ping Service</a></li>
+<li><a href="https://gitlab.k8s.cloud.statcan.ca/ndm-cloud-dotnetteam/pongservice">Pong Service</a></li>
+</ul></li>
+<li>Known issues and how to patch Windows Nodes</li>
+</ul>
+
+<h2 id="help">Help</h2>
+
+<p>There are quite a few places where you can get help with issues related to Windows and Kubernetes. We have had particular success in the Slack channel and GitHub issue queue when their was spefic problems related to our Windows node.</p>
+
+<ul>
+<li><a href="https://kubernetes.slack.com">Slack</a> (#sig-windows / #sig-azure)</li>
+<li><a href="https://message.gccollab.ca/home">GC Message</a></li>
+<li><a href="https://github.com/Azure/aks-engine">GitHub</a></li>
+<li>Azure Premium Ticket</li>
+</ul>
+
+<blockquote>
+<p>Note: Please remember to be concise with your issue and always reference your Kubernetes version, Windows Kernel version, and specific network configuration.</p>
+</blockquote>
+
+<h2 id="referenced-links-in-order-they-appear">Referenced Links (In order they appear)</h2>
+
+<ul>
+<li><a href="https://draft.sh/">Draft</a></li>
+<li><a href="https://helm.sh/">Helm</a></li>
+<li><a href="https://jenkins.io/">Jenkins</a></li>
+<li><a href="https://octopus.com">Octopus</a></li>
+<li><a href="https://jfrog.com/artifactory/">Artifactory</a> / <a href="https://jfrog.com/xray/">XRay</a></li>
+<li><a href="https://anthonychu.ca/post/aspnet-web-config-transforms-windows-containers-revisited/">Legacy Support</a></li>
+<li><a href="https://fluentbytes.com/override-classic-asp-net-web-config-configuration-settings-when-using-docker-containers/">Configuration Builder</a></li>
+<li><a href="https://github.com/sylus/jenkins-jnlp-agent-windows">windows-jnlp-agent-windows</a></li>
+<li><a href="https://jfrog.com/blog/migrate-nexus-artifactory-manage-binaries-better/">Tutorial: Deploying Windows Apps with Kubernetes</a></li>
+<li><a href="https://schd.ws/hosted_files/kccna18/1f/Deploying%20Windows%20Apps.pdf">Slides: Deploying Windows Apps with Kubernetes</a></li>
+</ul>
+
+<!-- Links Referenced -->
+</main>
+        
+            <footer id="wb-info">
+                <div class="landscape">
+                    <nav class="container wb-navcurr">
+                        <h2 class="invisible">About Aurora</h2>
+                    </nav>
+                </div>
+            </footer>
+        
+</body>
+</html>

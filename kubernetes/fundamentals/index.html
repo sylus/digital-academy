@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<!--[if lt IE 9]><html class="no-js lt-ie9" lang="en" dir="ltr">><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en"  >
+<!--<![endif]-->
+    <head>
+
+        <meta charset="utf-8">
+        <meta content="width=device-width,initial-scale=1" name="viewport">    
+    <!-- Web Experience Toolkit (WET) / Boîte à outils de l'expérience Web (BOEW)
+            wet-boew.github.io/wet-boew/License-en.html / wet-boew.github.io/wet-boew/Licence-fr.html -->
+    <title>Kubernetes Fundamentals</title>        
+        <meta name="description" content="">    
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js" type="text/javascript"></script>
+    <script>var custom_styling = document.createElement("script");</script>
+    
+    <link href="/digital-academy/lib/@gctools-components/aurora-ds/css/aurora.min.css" rel="stylesheet" type="text/css">
+    
+    <link href="/digital-academy/lib/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+</head>
+    <body vocab="http://schema.org/" typeof="WebPage">    
+    <script src="/digital-academy/lib/@gctools-components/aurora-ds/js/aurora.min.js" type="text/javascript"></script>
+
+            <ul class ="sr-only">
+                <li class="wb-slc">
+                    <a class="wb-sl" href="#wb-cont">
+                        
+                            Skip to main content
+                        
+                    </a>
+                </li>
+                <li class="wb-slc">
+                    <a class="wb-sl" href="#wb-info">
+                        
+                            Skip to "About government"
+                        
+                    </a>
+                </li>
+            </ul>
+
+        <header>
+            <nav class="main-nav navbar navbar-expand bg-white" typeof="SiteNavigationElement">
+    <div class="navbar-collapse nav-holder">
+        <ul class="mx-auto nav-site scroll nav nav-tabs" style="border-bottom: none;">
+            
+            
+            
+            <li class="nav-item">
+            <a class="nav-link" href="https://github.com/statcan/statcan">
+                <i class='fa fa-github'></i>
+                <span>GitHub</span>
+            </a>
+            
+            </li>
+            
+        </ul>
+    </div>
+</nav>
+
+            <nav aria-label="breadcrumb">
+                <h2 class="sr-only">You are here:</h2>
+                <div class="container">
+                    
+                    
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="https://sylus.ca/digital-academy/">Home</a></li>
+                        
+                            <li class="breadcrumb-item">&nbsp;Kubernetes Fundamentals</li>
+                        
+                    </ol>
+                </div>
+            </nav>
+        </header>
+<main property="mainContentOfPage" class="container"><link rel="stylesheet" href="https://sylus.ca/digital-academy//css/custom.css">
+<h1 id="wb-cont">Kubernetes Fundamentals</h1><div class="row mrgn-tp-lg">
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-6 col-sm-6">
+                <div id="toc" class="panel panel-default">
+                    <header class="panel-heading">
+                        <h2 class="h4 mrgn-tp-0">Table of Contents</h2>
+                    </header>
+                    <div class="panel-body">
+                        <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#interactive-learning-environment">Interactive Learning Environment</a></li>
+<li><a href="#desired-state">Desired State</a></li>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#pods">Pods</a></li>
+<li><a href="#replicasets">ReplicaSets</a></li>
+<li><a href="#deployments">Deployments</a></li>
+<li><a href="#statefulsets">StatefulSets</a></li>
+<li><a href="#daemonsets">DaemonSets</a></li>
+</ul></li>
+</ul>
+</nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+        
+
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe src="//www.youtube.com/embed/3I9PkvZ80BQ" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
+</div>
+
+
+<h2 id="interactive-learning-environment">Interactive Learning Environment</h2>
+
+<p>Basic concepts such as Pods, replicas, and different types of Deployment strategies.</p>
+
+<ul>
+<li><a href="https://katacoda.com/sylus/courses/kubernetes-fundamentals-1">Kubernetes Fundamentals</a></li>
+</ul>
+
+<blockquote>
+<p>All of our labs are powered by <a href="https://katacoda.com">Katacoda</a> and are located at this <a href="https://katacoda.com/sylus">Profile</a>.</p>
+</blockquote>
+
+<h2 id="desired-state">Desired State</h2>
+
+<p>The declarative model and the concept of desired state is the core of Kubernetes:</p>
+
+<ol>
+<li>We declare the desired state of our application (microservice) in a manifest file</li>
+<li>POST it to the Kubernetes API server</li>
+<li>Kubernetes stores this in the cluster store <code>etcd</code> as the application’s desired state</li>
+<li>Kubernetes deploys the application on the cluster</li>
+<li>Kubernetes implements watch loops to make sure the cluster doesn’t vary from desired state</li>
+</ol>
+
+<h2 id="introduction">Introduction</h2>
+
+<p>Kubernetes provides a variety of controllers that you can use to define how pods are set up and deployed within the Kubernetes cluster. These controllers can be used to group pods together according to their runtime needs and define pod replication and pod start up ordering.</p>
+
+<h2 id="pods">Pods</h2>
+
+<figure class="text-center">
+    <img src="/digital-academy/images/kubernetes/pod-0.png#center"/> <figcaption>
+            <h4>Figure 1: Pod</h4>
+        </figcaption>
+</figure>
+
+
+<p>Yes, Kubernetes runs all sorts of containerized apps (CRI-O, ContainerD, Docker, etc). However those containers always have to run inside of a construct called a Pod. You cannot run a container directly on a Kubernetes cluster.</p>
+
+<p>It can technically be a bit more complicated then that but for now the simplest model is to run a single container inside a Pod. There are some advanced use-cases discussed below where you can run multiple containers inside of a single Pod but for the moment these multi-container Pods are beyond scope.</p>
+
+<p>Examples:</p>
+
+<ul>
+<li>Service meshes and logging.</li>
+<li>Web containers supported by a helper container that ensures the latest content is available to the web server</li>
+<li>Web containers with a tightly coupled log scraper tailing the logs off to a logging service somewhere else.</li>
+</ul>
+
+<p>A good mental model is to think of a Pod as a ring fenced environment to run containers in. The Pod itself doesn’t actually run anything it is merely just a sandbox to run containers in. Similarly if you ring-fence an area of the host OS, build a network stack, create a bunch of kernel namespaces, and run one or more containers in it then that is a Pod.</p>
+
+<blockquote>
+<p><strong>Note</strong>: If you’re running multiple containers in a Pod, they all share the same environment things like the IPC namespace, shared memory, volumes, network stack etc.</p>
+</blockquote>
+
+<h2 id="replicasets">ReplicaSets</h2>
+
+<figure class="text-center">
+    <img src="/digital-academy/images/kubernetes/replicaset.png#center"/> <figcaption>
+            <h4>Figure 2: ReplicaSet</h4>
+        </figcaption>
+</figure>
+
+
+<p>You can define a set of pods that should be replicated with a ReplicaSet. This allows you to define the exact configuration for each of the pods in the group and which resources they should have access to. Using ReplicaSets not only caters to the easy scaling and rescheduling of an application, but also allows you to perform rolling or multi-track updates to an application.</p>
+
+<p>A ReplicaSet is a higher-level Kubernetes object that wraps around a Pod and adds features. As the names suggests, they take a Pod template and deploy a desired number of replicas of it. They also instantiate background reconciliation loops that check and make sure the right number of replicas are always running – desired state vs actual state.</p>
+
+<blockquote>
+<p>Note: Although ReplicaSets can be deployed directly, they are usually invoked by even higher-level objects such as Deployments.</p>
+</blockquote>
+
+<h2 id="deployments">Deployments</h2>
+
+<p>You can use a Deployment to manage pods and ReplicaSets. Deployments are useful when you need to roll out changes to ReplicaSets. By using a Deployment to manage a ReplicaSet, you can easily rollback to an earlier Deployment revision. A Deployment allows you to create a newer revision of a ReplicaSet and then migrate existing pods from a previous ReplicaSet into the new revision. The Deployment can then manage the cleanup of older unused ReplicaSets.</p>
+
+<p>Deployments have been first-class REST objects in the Kubernetes API since Kubernetes 1.2. This means we define them in YAML or JSON manifest files that we POST to the API server in the normal manner.</p>
+
+<p>Rolling updates are a core feature of Deployments. For example, we can run multiple concurrent versions of a Deployment in true blue/green or canary fashion. Kubernetes can also detect and stop rollouts if the new version is not working.</p>
+
+<h2 id="statefulsets">StatefulSets</h2>
+
+<figure class="text-center">
+    <img src="/digital-academy/images/kubernetes/statefulset.png#center"/> <figcaption>
+            <h4>Figure 3: Statefulset</h4>
+        </figcaption>
+</figure>
+
+
+<p>You can use StatefulSets to create pods that guarantee start up order and unique identifiers, which are then used to ensure that the pod maintains its identity across the lifecycle of the StatefulSet. This feature makes it possible to run stateful applications within Kubernetes, as typical persistent components such as storage and networking are guaranteed. Furthermore, when you create pods they are always created in the same order and allocated identifiers that are applied to host names and the internal cluster DNS. Those identifiers ensure there are stable and predictable network identities for pods in the environment.</p>
+
+<h2 id="daemonsets">DaemonSets</h2>
+
+<figure class="text-center">
+    <img src="/digital-academy/images/kubernetes/daemonset.png#center"/> <figcaption>
+            <h4>Figure 4: Daemonset</h4>
+        </figcaption>
+</figure>
+
+
+<p>DaemonSets manage groups of replicated Pods. However, DaemonSets attempt to adhere to a one-Pod-per-node model, either across the entire cluster or a subset of nodes. Daemonset will not run more than one replica per node. Another advantage of using Daemonset is, If you add a node to the cluster then Daemonset will automatically spawn pod on that node, which deployment will not do.</p>
+
+<p>DaemonSets are useful for deploying ongoing background tasks that you need to run on all or certain nodes, and which do not require user intervention. Examples of such tasks include storage daemons like ceph, log collection daemons like fluentd, and node monitoring daemons like collectd.</p>
+
+<!-- Links Referenced -->
+</main>
+        
+            <footer id="wb-info">
+                <div class="landscape">
+                    <nav class="container wb-navcurr">
+                        <h2 class="invisible">About Aurora</h2>
+                    </nav>
+                </div>
+            </footer>
+        
+</body>
+</html>

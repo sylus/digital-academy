@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<!--[if lt IE 9]><html class="no-js lt-ie9" lang="en" dir="ltr">><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en"  >
+<!--<![endif]-->
+    <head>
+
+        <meta charset="utf-8">
+        <meta content="width=device-width,initial-scale=1" name="viewport">    
+    <!-- Web Experience Toolkit (WET) / Boîte à outils de l'expérience Web (BOEW)
+            wet-boew.github.io/wet-boew/License-en.html / wet-boew.github.io/wet-boew/Licence-fr.html -->
+    <title>Virtual Kubelet</title>        
+        <meta name="description" content="">    
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js" type="text/javascript"></script>
+    <script>var custom_styling = document.createElement("script");</script>
+    
+    <link href="/digital-academy/lib/@gctools-components/aurora-ds/css/aurora.min.css" rel="stylesheet" type="text/css">
+    
+    <link href="/digital-academy/lib/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+</head>
+    <body vocab="http://schema.org/" typeof="WebPage">    
+    <script src="/digital-academy/lib/@gctools-components/aurora-ds/js/aurora.min.js" type="text/javascript"></script>
+
+            <ul class ="sr-only">
+                <li class="wb-slc">
+                    <a class="wb-sl" href="#wb-cont">
+                        
+                            Skip to main content
+                        
+                    </a>
+                </li>
+                <li class="wb-slc">
+                    <a class="wb-sl" href="#wb-info">
+                        
+                            Skip to "About government"
+                        
+                    </a>
+                </li>
+            </ul>
+
+        <header>
+            <nav class="main-nav navbar navbar-expand bg-white" typeof="SiteNavigationElement">
+    <div class="navbar-collapse nav-holder">
+        <ul class="mx-auto nav-site scroll nav nav-tabs" style="border-bottom: none;">
+            
+            
+            
+            <li class="nav-item">
+            <a class="nav-link" href="https://github.com/statcan/statcan">
+                <i class='fa fa-github'></i>
+                <span>GitHub</span>
+            </a>
+            
+            </li>
+            
+        </ul>
+    </div>
+</nav>
+
+            <nav aria-label="breadcrumb">
+                <h2 class="sr-only">You are here:</h2>
+                <div class="container">
+                    
+                    
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="https://sylus.ca/digital-academy/">Home</a></li>
+                        
+                            <li class="breadcrumb-item">&nbsp;Virtual Kubelet</li>
+                        
+                    </ol>
+                </div>
+            </nav>
+        </header>
+<main property="mainContentOfPage" class="container"><link rel="stylesheet" href="https://sylus.ca/digital-academy//css/custom.css">
+<h1 id="wb-cont">Virtual Kubelet</h1><div class="row mrgn-tp-lg">
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-6 col-sm-6">
+                <div id="toc" class="panel panel-default">
+                    <header class="panel-heading">
+                        <h2 class="h4 mrgn-tp-0">Table of Contents</h2>
+                    </header>
+                    <div class="panel-body">
+                        <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#interactive-learning-environment">Interactive Learning Environment</a></li>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#background">Background</a></li>
+<li><a href="#orchestration">Orchestration</a></li>
+<li><a href="#future">Future</a></li>
+<li><a href="#example">Example</a></li>
+</ul></li>
+</ul>
+</nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+        
+
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe src="//www.youtube.com/embed/lrb9XL6Pcas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
+</div>
+
+
+<h2 id="interactive-learning-environment">Interactive Learning Environment</h2>
+
+<blockquote>
+<p>All of our labs are powered by <a href="https://katacoda.com">Katacoda</a> and are located at this <a href="https://katacoda.com/sylus">Profile</a>.</p>
+</blockquote>
+
+<h2 id="introduction">Introduction</h2>
+
+<p>Virtual Kubelet is an open source Kubernetes kubelet implementation that masquerades as a kubelet for the purposes of connecting Kubernetes to other APIs. This allows the nodes to be backed by other services like ACI, AWS Fargate, IoT Edge etc. The primary scenario for VK is enabling the extension of the Kubernetes API into serverless container platforms.</p>
+
+<p>Platforms:</p>
+
+<ul>
+<li>Azure Container Instances</li>
+<li>AWS Fargate</li>
+<li>Hyper.sh</li>
+<li>Hashicorp Nomad</li>
+<li>vShphere</li>
+<li>Etc</li>
+</ul>
+
+<p><img src="/digital-academy/images/kubernetes/virtual-kubelet.png#center" alt="Virtual Kubelet" /></p>
+
+<h2 id="background">Background</h2>
+
+<blockquote>
+<p>Brendan Burns: The future will be containerized and those containers will run on serverless infrastructure</p>
+</blockquote>
+
+<p>Thanks to wide container adoption among enterpise organizations a few things have become clear:</p>
+
+<ul>
+<li>Decoupling of the &ldquo;layers&rdquo; in the technology stack are producing a clean, principled layering of concepts with clear contracts, ownership and responsibility</li>
+<li>Introduction of these &ldquo;layers&rdquo; has enabled developers to focus their attention exclusively on the thing that matters to them namely <strong>the application</strong>.</li>
+</ul>
+
+<p>This has happened before via the first generation of PaaS which focused on empowering developers to adopt &ldquo;serverless&rdquo; style architectures. While still incredibly useful for developer productivity there were often too many overlapping concepts mixed into a single monolith. A user who might want to leverage &ldquo;serverless&rdquo; but not the specific programming language or who wanted a more cost efficient model for large stateful applications might have some issues.</p>
+
+<p>Thanks to the development of containers and the defacto decoupling of developer experience from serverless runtimes there is an huge growth this year of serverless container infrastructure and support among all major cloud providers as one can see by looking at the platforms supporting this above.</p>
+
+<h2 id="orchestration">Orchestration</h2>
+
+<p>Most if not all serverless container infrastructure like Azure Container Instances is raw infrastructure. Meaning it is an excellent way to easily run a few containers with zero issue(s). Building complicated systems, however, requires the development of an orchestrator to introduce higher level concepts like Services, Deployments, Secrets, etc.</p>
+
+<p>Kubernetes steps in for these serverless platforms, particularly, since the world is consolidating around the Kubernetes orchestration API, and the value of seamless integration with existing Kubernetes tooling is quite high thanks to tools like Istio and KNative.</p>
+
+<h2 id="future">Future</h2>
+
+<p>Kubernetes was built to give developers a consistent and clean application oriented API that enabled them to forget about the explicit details of machines and machine management. Now thanks to the development of serverless container infrastructure this enables people to begin to forget about the machines entirely. However the successful use of serverless containers for larger scale applications requires the development of an orchestrator. This is why the integration of the Kubernetes orchestration layer and serverless container infrastructure is so crucial to the future success of both Kubernetes and the serverless infrastructure.</p>
+
+<p>At this moment many experts are leveraging Kubernetes clusters that are a hybrid between dedicated machines and severless container infrastructure. The dedicated machines are often used for stateful services with relatively static / constant usage, as well as dedicated hardware like GPU&rsquo;s. Serverless containers are often used for burstable and / or stateless workloads.</p>
+
+<h2 id="example">Example</h2>
+
+<p>A real world use case for Kubernetes and serverless container infrastructure has a ton of real-world uses cases for both batch and / or burstable workloads. For instance consider a department that is doing image processing across many pipelines. They can now rapidly spin up a large number of containers in quick sucession to handle a recent upload of images to shared storage. Within mere seconds they can go from no infrastructure, to hundreds of containers processing images, and when this processing is done, they immediately go back to paying nothing for the capacity.</p>
+
+<!-- Links Referenced -->
+</main>
+        
+            <footer id="wb-info">
+                <div class="landscape">
+                    <nav class="container wb-navcurr">
+                        <h2 class="invisible">About Aurora</h2>
+                    </nav>
+                </div>
+            </footer>
+        
+</body>
+</html>

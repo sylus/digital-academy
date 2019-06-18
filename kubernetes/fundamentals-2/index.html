@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<!--[if lt IE 9]><html class="no-js lt-ie9" lang="en" dir="ltr">><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en"  >
+<!--<![endif]-->
+    <head>
+
+        <meta charset="utf-8">
+        <meta content="width=device-width,initial-scale=1" name="viewport">    
+    <!-- Web Experience Toolkit (WET) / Boîte à outils de l'expérience Web (BOEW)
+            wet-boew.github.io/wet-boew/License-en.html / wet-boew.github.io/wet-boew/Licence-fr.html -->
+    <title>Kubernetes Fundamentals 2</title>        
+        <meta name="description" content="">    
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js" type="text/javascript"></script>
+    <script>var custom_styling = document.createElement("script");</script>
+    
+    <link href="/digital-academy/lib/@gctools-components/aurora-ds/css/aurora.min.css" rel="stylesheet" type="text/css">
+    
+    <link href="/digital-academy/lib/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+</head>
+    <body vocab="http://schema.org/" typeof="WebPage">    
+    <script src="/digital-academy/lib/@gctools-components/aurora-ds/js/aurora.min.js" type="text/javascript"></script>
+
+            <ul class ="sr-only">
+                <li class="wb-slc">
+                    <a class="wb-sl" href="#wb-cont">
+                        
+                            Skip to main content
+                        
+                    </a>
+                </li>
+                <li class="wb-slc">
+                    <a class="wb-sl" href="#wb-info">
+                        
+                            Skip to "About government"
+                        
+                    </a>
+                </li>
+            </ul>
+
+        <header>
+            <nav class="main-nav navbar navbar-expand bg-white" typeof="SiteNavigationElement">
+    <div class="navbar-collapse nav-holder">
+        <ul class="mx-auto nav-site scroll nav nav-tabs" style="border-bottom: none;">
+            
+            
+            
+            <li class="nav-item">
+            <a class="nav-link" href="https://github.com/statcan/statcan">
+                <i class='fa fa-github'></i>
+                <span>GitHub</span>
+            </a>
+            
+            </li>
+            
+        </ul>
+    </div>
+</nav>
+
+            <nav aria-label="breadcrumb">
+                <h2 class="sr-only">You are here:</h2>
+                <div class="container">
+                    
+                    
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="https://sylus.ca/digital-academy/">Home</a></li>
+                        
+                            <li class="breadcrumb-item">&nbsp;Kubernetes Fundamentals 2</li>
+                        
+                    </ol>
+                </div>
+            </nav>
+        </header>
+<main property="mainContentOfPage" class="container"><link rel="stylesheet" href="https://sylus.ca/digital-academy//css/custom.css">
+<h1 id="wb-cont">Kubernetes Fundamentals 2</h1><div class="row mrgn-tp-lg">
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-6 col-sm-6">
+                <div id="toc" class="panel panel-default">
+                    <header class="panel-heading">
+                        <h2 class="h4 mrgn-tp-0">Table of Contents</h2>
+                    </header>
+                    <div class="panel-body">
+                        <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#interactive-learning-environment">Interactive Learning Environment</a></li>
+<li><a href="#services">Services</a></li>
+<li><a href="#configmaps">ConfigMaps</a></li>
+<li><a href="#secrets">Secrets</a></li>
+<li><a href="#persistentvolumes-persistentvolumeclaims">PersistentVolumes / PersistentVolumeClaims</a></li>
+<li><a href="#ingress">Ingress</a></li>
+</ul></li>
+</ul>
+</nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+        
+
+<iframe src="//aka.ms/ampembed?url=%2F%2Fonyxmediacdn-onyxmedia.streaming.mediaservices.windows.net%2F415e3139-77a0-481d-94cd-8ff0fdfe883a%2Fphippy-goes-to-the-zoo-a-kuberne.ism%2Fmanifest"  autoplay="false" name="azuremediaplayer" scrolling="no" frameborder="no" align="center" height="550px" width="95%" allowfullscreen></iframe>
+
+<h2 id="interactive-learning-environment">Interactive Learning Environment</h2>
+
+<p>Advanced concepts such as  Services, Configmaps, Secrets, and Persistent Volumes.</p>
+
+<ul>
+<li><a href="https://katacoda.com/sylus/courses/kubernetes-fundamentals-2">Kubernetes Fundamentals</a></li>
+</ul>
+
+<blockquote>
+<p>All of our labs are powered by <a href="https://katacoda.com">Katacoda</a> and are located at this <a href="https://katacoda.com/sylus">Profile</a>.</p>
+</blockquote>
+
+<h2 id="services">Services</h2>
+
+<figure class="text-center">
+    <img src="/digital-academy/images/kubernetes/svc-0.png#center"/> <figcaption>
+            <h4>Figure 1: No Labels</h4>
+        </figcaption>
+</figure>
+
+
+<p>Pods are mortal and can die, for instance, if they are deployed via ReplicaSets or Deployments, when they fail, they will get replaced with new Pods somewhere else in the cluster. At this point though these Pods now have totally different IPs. This can also happens when we scale an app as all of the new Pods all execute with their own new IPs. Additionally this can also happen when performing rolling updates etc whereby the process of replacing old Pods with new Pods can result in a lot of IP churn.</p>
+
+<p>The lesson to be learnt here is that we can&rsquo;t rely on Pod IPs. But we still need to make sure we have access to our services. Assume we’ve got a microservice app with a persistent storage backend that other parts of the app use to store and retrieve data. How would this work if we can’t rely on the IP addresses of the backend Pods. Take a look at <strong>Figure 1</strong>. This shows a simplified version of a two-tier app with a web front-end that talks to a persistent backend. But it’s all Pod-based, meaning the IPs of the backend Pods can change.</p>
+
+<figure class="text-center">
+    <img src="/digital-academy/images/kubernetes/svc-1.png#center"/> <figcaption>
+            <h4>Figure 2: Labels</h4>
+        </figcaption>
+</figure>
+
+
+<p>This is where Services come in to play. Services provide a reliable networking endpoint for a set of Pods. Once a Service object is thrown into the mix, as shown in <strong>Figure 2</strong>, we can see how the front-end can now talk to the reliable IP of the Service, which in-turn load-balances all requests over the backend Pods behind it. Obviously, the Service keeps track of which Pods are behind it and dynamically updates as Pods are added and removed.</p>
+
+<p>Digging in to a bit more detail. Services are fully fledged objects in the Kubernetes API just like Pods, ReplicaSets, and Deployments. They provide stable DNS, IP addresses, and support TCP and UDP (TCP by default). They also perform simple randomized load-balancing across Pods, though more advanced load balancing algorithms may be supported in the future. This adds up to a situation where Pods can come and go, the Service observes this, automatically updates itself, and continues to provide that stable networking endpoint. The same applies if we scale the number of Pods all the new Pods, with the new IPs, get seamlessly added to the Service and load-balancing keeps working.</p>
+
+<blockquote>
+<p>Service: A stable network abstraction point for multiple Pods, and it provides basic load balancing.</p>
+</blockquote>
+
+<h2 id="configmaps">ConfigMaps</h2>
+
+<figure class="text-center">
+    <img src="/digital-academy/images/kubernetes/configmap.png#center"/> <figcaption>
+            <h4>Figure 3: ConfigMaps</h4>
+        </figcaption>
+</figure>
+
+
+<p>ConfigMaps allow you to decouple configuration artifacts from image content to keep containerized applications portable. This is achieved by binding configuration files, command-line arguments, environment variables, port numbers, and other configuration artifacts to your Pods&rsquo; containers and system components at runtime. ConfigMaps allow you to separate your configurations from your Pods and components, which helps keep your workloads portable, makes their configurations easier to change and manage, and prevents hardcoding configuration data to Pod specifications.</p>
+
+<p>ConfigMaps are useful for storing and sharing non-sensitive, unencrypted configuration information. To use sensitive information in your clusters, you must use Secrets.</p>
+
+<h2 id="secrets">Secrets</h2>
+
+<figure class="text-center">
+    <img src="/digital-academy/images/kubernetes/secret.png#center"/> <figcaption>
+            <h4>Figure 4: Secrets</h4>
+        </figcaption>
+</figure>
+
+
+<p>Secrets are secure objects which store sensitive data, such as passwords, OAuth tokens, and SSH keys, in your clusters. Storing sensitive data in Secrets is more secure than plaintext ConfigMaps or in Pod specifications. Using Secrets gives you control over how sensitive data is used, and reduces the risk of exposing the data to unauthorized users.</p>
+
+<p>You can also encrypt Secrets at the application layer using a key you manage in Cloud KMS. To learn more, see Application-layer Secrets Encryption.</p>
+
+<h2 id="persistentvolumes-persistentvolumeclaims">PersistentVolumes / PersistentVolumeClaims</h2>
+
+<figure class="text-center">
+    <img src="/digital-academy/images/kubernetes/persistentvolumeclaim.jpg#center"/> <figcaption>
+            <h4>Figure 5: PVC</h4>
+        </figcaption>
+</figure>
+
+
+<p>PersistentVolume resources are used to manage durable storage in a cluster. PersistentVolumes can also be used with other storage types like NFS. Unlike Volumes, the PersistentVolumes lifecycle is managed by Kubernetes. PersistentVolumes can be dynamically provisioned; the user does not have to manually create and delete the backing storage.</p>
+
+<p>PersistentVolumes are cluster resources that exist independently of Pods. This means that the disk and data represented by a PersistentVolume continue to exist as the cluster changes and as Pods are deleted and recreated. PersistentVolume resources can be provisioned dynamically through PersistentVolumeClaims, or they can be explicitly created by a cluster administrator.</p>
+
+<p>A PersistentVolumeClaim is a request for and claim to a PersistentVolume resource. PersistentVolumeClaim objects request a specific size, access mode, and StorageClass for the PersistentVolume. If a PersistentVolume that satisfies the request exists or can be provisioned, the PersistentVolumeClaim is bound to that PersistentVolume.</p>
+
+<p>Pods use claims as Volumes. The cluster inspects the claim to find the bound Volume and mounts that Volume for the Pod. Portability is another advantage of using PersistentVolumes and PersistentVolumeClaims. You can easily use the same Pod specification across different clusters and environments because PersistentVolume is an interface to the actual backing storage.</p>
+
+<h2 id="ingress">Ingress</h2>
+
+<figure class="text-center">
+    <img src="/digital-academy/images/kubernetes/ingress.png#center"/> <figcaption>
+            <h4>Figure 5: Ingress</h4>
+        </figcaption>
+</figure>
+
+
+<p>An Ingress exposes HTTP and HTTPS routes from outside the cluster to services within the cluster. Traffic routing is controlled by rules defined on the Ingress resource. We expose the ingress controller to the internet, and it will route requests to the applications based on hostname, path or other conditions.</p>
+
+<blockquote>
+<p>Note: An Ingress does not expose arbitrary ports or protocols. Exposing services other than HTTP and HTTPS to the internet typically uses a service of type <code>Service.Type=NodePort</code> or <code>Service.Type=LoadBalancer</code>.</p>
+</blockquote>
+
+<!-- Links Referenced -->
+</main>
+        
+            <footer id="wb-info">
+                <div class="landscape">
+                    <nav class="container wb-navcurr">
+                        <h2 class="invisible">About Aurora</h2>
+                    </nav>
+                </div>
+            </footer>
+        
+</body>
+</html>

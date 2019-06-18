@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<!--[if lt IE 9]><html class="no-js lt-ie9" lang="en" dir="ltr">><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en"  >
+<!--<![endif]-->
+    <head>
+
+        <meta charset="utf-8">
+        <meta content="width=device-width,initial-scale=1" name="viewport">    
+    <!-- Web Experience Toolkit (WET) / Boîte à outils de l'expérience Web (BOEW)
+            wet-boew.github.io/wet-boew/License-en.html / wet-boew.github.io/wet-boew/Licence-fr.html -->
+    <title>EFK</title>        
+        <meta name="description" content="">    
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js" type="text/javascript"></script>
+    <script>var custom_styling = document.createElement("script");</script>
+    
+    <link href="/digital-academy/lib/@gctools-components/aurora-ds/css/aurora.min.css" rel="stylesheet" type="text/css">
+    
+    <link href="/digital-academy/lib/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+</head>
+    <body vocab="http://schema.org/" typeof="WebPage">    
+    <script src="/digital-academy/lib/@gctools-components/aurora-ds/js/aurora.min.js" type="text/javascript"></script>
+
+            <ul class ="sr-only">
+                <li class="wb-slc">
+                    <a class="wb-sl" href="#wb-cont">
+                        
+                            Skip to main content
+                        
+                    </a>
+                </li>
+                <li class="wb-slc">
+                    <a class="wb-sl" href="#wb-info">
+                        
+                            Skip to "About government"
+                        
+                    </a>
+                </li>
+            </ul>
+
+        <header>
+            <nav class="main-nav navbar navbar-expand bg-white" typeof="SiteNavigationElement">
+    <div class="navbar-collapse nav-holder">
+        <ul class="mx-auto nav-site scroll nav nav-tabs" style="border-bottom: none;">
+            
+            
+            
+            <li class="nav-item">
+            <a class="nav-link" href="https://github.com/statcan/statcan">
+                <i class='fa fa-github'></i>
+                <span>GitHub</span>
+            </a>
+            
+            </li>
+            
+        </ul>
+    </div>
+</nav>
+
+            <nav aria-label="breadcrumb">
+                <h2 class="sr-only">You are here:</h2>
+                <div class="container">
+                    
+                    
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="https://sylus.ca/digital-academy/">Home</a></li>
+                        
+                            <li class="breadcrumb-item">&nbsp;EFK</li>
+                        
+                    </ol>
+                </div>
+            </nav>
+        </header>
+<main property="mainContentOfPage" class="container"><link rel="stylesheet" href="https://sylus.ca/digital-academy//css/custom.css">
+<h1 id="wb-cont">EFK</h1><div class="row mrgn-tp-lg">
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-6 col-sm-6">
+                <div id="toc" class="panel panel-default">
+                    <header class="panel-heading">
+                        <h2 class="h4 mrgn-tp-0">Table of Contents</h2>
+                    </header>
+                    <div class="panel-body">
+                        <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#interactive-learning-environment">Interactive Learning Environment</a></li>
+<li><a href="#background">Background</a></li>
+<li><a href="#logging-in-kubernetes">Logging in Kubernetes</a></li>
+<li><a href="#capturing-kubernetes-logs">Capturing Kubernetes Logs</a></li>
+<li><a href="#efk-stack">EFK Stack</a></li>
+</ul></li>
+</ul>
+</nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+        
+
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe src="//www.youtube.com/embed/QoHNkjtbHPg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
+</div>
+
+
+<h2 id="interactive-learning-environment">Interactive Learning Environment</h2>
+
+<p>In this lab, we will examine the Docker CLI and execute our first container.</p>
+
+<ul>
+<li><a href="https://katacoda.com/sylus/courses/kubernetes-cncf/module-4">Kubernetes CNCF: Module 4 - EFK</a></li>
+</ul>
+
+<blockquote>
+<p>All of our labs are powered by <a href="https://katacoda.com">Katacoda</a> and are located at this <a href="https://katacoda.com/sylus">Profile</a>.</p>
+</blockquote>
+
+<h2 id="background">Background</h2>
+
+<p>Any Kubernetes production environment will rely heavily on logs. Using built-in Kubernetes capabilities along with some additional data collection tools, you can easily automate log collection and aggregation for ongoing analysis of your Kubernetes clusters. We typically try to separate out platform logging from application logging. This may be done via very different tooling and applications, or even by filtering and tagging within the logs themselves.</p>
+
+<p>As with any distributed system, logging provides the vital evidence for accurately tracing specific calls, even if they are on different microservices, so that a root cause of the issue(s) may be identified.</p>
+
+<p>Here are our suggestions for logging within a distributed Kubernetes environment:</p>
+
+<ul>
+<li>Use a single, highly available log aggregator, and capture data from across the entire environment in a single place</li>
+<li>Create a single, common transaction ID across the entire end-to-end call for each client</li>
+<li>Ensure that service names and applications are being logged</li>
+<li>Standardize the logging levels within the entire stack</li>
+<li>Ensure that no data intended to be secure is being logged in the clear</li>
+</ul>
+
+<h2 id="logging-in-kubernetes">Logging in Kubernetes</h2>
+
+<p>Besides this high-level approach to logging, you should understand how Kubernetes handles its own logging and events.
+Kubernetes nodes run on a virtual Linux computing platform. Components like kubelet and Docker runtime run natively on Linux, logging onto its local system. Linux logging is configured at different folder locations including the ubiquitous /var/log file.</p>
+
+<p>The first thing an administrator should do is validate log rotations for these log files, as well as all the other miscellaneous Linux logs. Kubernetes’ documentation provides good recommendations for files to rotate. The logging configuration should be inspected even if you intend to replace the local logging mechanism with an alternative.</p>
+
+<p>We don’t recommend that you keep logs for virtual compute instances inside ephemeral cloud computing environments. Such instances can disappear without notice. Modern logging and analytics tools provide enough context and visual aids to help operators determine what actually transpires inside large Kubernetes cluster deployments. You should use a log aggregation service to ship your logs away from the Kubernetes environment, for later review and analysis.</p>
+
+<h2 id="capturing-kubernetes-logs">Capturing Kubernetes Logs</h2>
+
+<p>For capturing Kubernetes and Application level logs we recommend using the Fluentd data collector to transport logs to an EFK stack. This log shipping method makes use of the command kubectl logs. You could have a logging pod with a Fluentd container on every node (Kubernetes makes this easy with the concept of DaemonSets). Fluentd will be configured (via configmap) to read all the log locations for every node and essentially aggregate them into a common searching location.</p>
+
+<p>Another common variation on this approach where your application containers have a logging container in the same pod (A.K.A. Container Sidecar Approach), separating the application from the system logging.</p>
+
+<blockquote>
+<p>Note: The decoupling of the aggregation of logs away from the application code as this is very critical for both chain of responsibility and performrance.</p>
+</blockquote>
+
+<h2 id="efk-stack">EFK Stack</h2>
+
+<p>Elasticsearch is an open source search engine known for its ease of use. Kibana is an open source Web UI that makes ElasticSearch user friendly for marketers, engineers, and data scientists alike.</p>
+
+<ul>
+<li>ElasticSearch</li>
+<li>Fluentd</li>
+<li>Kibana</li>
+</ul>
+
+<p>By combining these three tools EFK (ElasticSearch, Fluentd, and Kibana) we get a scalable, flexible, and easy to use log collection and analytics pipeline.</p>
+
+<!-- Links Referenced -->
+</main>
+        
+            <footer id="wb-info">
+                <div class="landscape">
+                    <nav class="container wb-navcurr">
+                        <h2 class="invisible">About Aurora</h2>
+                    </nav>
+                </div>
+            </footer>
+        
+</body>
+</html>

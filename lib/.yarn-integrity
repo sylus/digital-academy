@@ -1,0 +1,20 @@
+{
+  "systemParams": "darwin-x64-67",
+  "modulesFolders": [
+    "static/lib"
+  ],
+  "flags": [],
+  "linkedModules": [],
+  "topLevelPatterns": [
+    "@gctools-components/aurora-ds@^0.3.3",
+    "font-awesome@^4.7.0",
+    "reveal@^0.0.4"
+  ],
+  "lockfileEntries": {
+    "@gctools-components/aurora-ds@^0.3.3": "https://registry.yarnpkg.com/@gctools-components/aurora-ds/-/aurora-ds-0.3.3.tgz#ddd86e9451eaddb49e411c0c4267d537fa45cc99",
+    "font-awesome@^4.7.0": "https://registry.yarnpkg.com/font-awesome/-/font-awesome-4.7.0.tgz#8fa8cf0411a1a31afd07b06d2902bb9fc815a133",
+    "reveal@^0.0.4": "https://registry.yarnpkg.com/reveal/-/reveal-0.0.4.tgz#1c1428193359fb03bc029139062ea29f8f691d85"
+  },
+  "files": [],
+  "artifacts": {}
+}

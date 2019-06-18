@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<!--[if lt IE 9]><html class="no-js lt-ie9" lang="en" dir="ltr">><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en"  >
+<!--<![endif]-->
+    <head>
+
+        <meta charset="utf-8">
+        <meta content="width=device-width,initial-scale=1" name="viewport">    
+    <!-- Web Experience Toolkit (WET) / Boîte à outils de l'expérience Web (BOEW)
+            wet-boew.github.io/wet-boew/License-en.html / wet-boew.github.io/wet-boew/Licence-fr.html -->
+    <title>Azure Kubernetes Service</title>        
+        <meta name="description" content="">    
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js" type="text/javascript"></script>
+    <script>var custom_styling = document.createElement("script");</script>
+    
+    <link href="/digital-academy/lib/@gctools-components/aurora-ds/css/aurora.min.css" rel="stylesheet" type="text/css">
+    
+    <link href="/digital-academy/lib/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+</head>
+    <body vocab="http://schema.org/" typeof="WebPage">    
+    <script src="/digital-academy/lib/@gctools-components/aurora-ds/js/aurora.min.js" type="text/javascript"></script>
+
+            <ul class ="sr-only">
+                <li class="wb-slc">
+                    <a class="wb-sl" href="#wb-cont">
+                        
+                            Skip to main content
+                        
+                    </a>
+                </li>
+                <li class="wb-slc">
+                    <a class="wb-sl" href="#wb-info">
+                        
+                            Skip to "About government"
+                        
+                    </a>
+                </li>
+            </ul>
+
+        <header>
+            <nav class="main-nav navbar navbar-expand bg-white" typeof="SiteNavigationElement">
+    <div class="navbar-collapse nav-holder">
+        <ul class="mx-auto nav-site scroll nav nav-tabs" style="border-bottom: none;">
+            
+            
+            
+            <li class="nav-item">
+            <a class="nav-link" href="https://github.com/statcan/statcan">
+                <i class='fa fa-github'></i>
+                <span>GitHub</span>
+            </a>
+            
+            </li>
+            
+        </ul>
+    </div>
+</nav>
+
+            <nav aria-label="breadcrumb">
+                <h2 class="sr-only">You are here:</h2>
+                <div class="container">
+                    
+                    
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="https://sylus.ca/digital-academy/">Home</a></li>
+                        
+                            <li class="breadcrumb-item">&nbsp;Azure Kubernetes Service</li>
+                        
+                    </ol>
+                </div>
+            </nav>
+        </header>
+<main property="mainContentOfPage" class="container"><link rel="stylesheet" href="https://sylus.ca/digital-academy//css/custom.css">
+<h1 id="wb-cont">Azure Kubernetes Service</h1><div class="row mrgn-tp-lg">
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-6 col-sm-6">
+                <div id="toc" class="panel panel-default">
+                    <header class="panel-heading">
+                        <h2 class="h4 mrgn-tp-0">Table of Contents</h2>
+                    </header>
+                    <div class="panel-body">
+                        <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#aks">AKS</a>
+<ul>
+<li><a href="#create-vnet-resources">Create VNET resources</a></li>
+<li><a href="#service-principal">Service Principal</a></li>
+<li><a href="#create-aks-cluster">Create AKS cluster</a></li>
+<li><a href="#common-operations">Common Operations</a></li>
+</ul></li>
+<li><a href="#aks-engine">AKS-Engine</a>
+<ul>
+<li><a href="#cluster-definition">Cluster Definition</a></li>
+<li><a href="#installation">Installation</a></li>
+<li><a href="#deployment">Deployment</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+        
+
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe src="//www.youtube.com/embed/IOhfZP6p2kg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
+</div>
+
+
+<h2 id="aks">AKS</h2>
+
+<p>Azure Kubernetes Service (<strong>AKS</strong>) managed your hosted Kubernetes environment, making it quick and easy to deploy and manage containerized applications without advanced container orchestration expertise. It also eliminates the burden of ongoing operations and maintenance by provisioning, upgrading, and scaling resources on demand, without taking your applications offline.</p>
+
+<p><strong>Benefits</strong>:</p>
+
+<ul>
+<li>Master Node(s) are free and handled by Azure</li>
+<li>Refined process for updating, and scaling</li>
+<li>Integrated metrics with Portal</li>
+<li>Allows for Infrastructure as Code model through ARM templates</li>
+<li>Dev Spaces</li>
+<li>Windows GA Support scheduled for July</li>
+</ul>
+
+<p>AKS is now general availability (<strong>GA</strong>) and with that announcement a slew of longstanding issues have been addressed! Most importantly you can now leverage a custom vnet and RBAC with your cluster. These were among the final key blockers for many organizations fully going down the AKS route as opposed to AKS Engine where you still have the master node under your control.</p>
+
+<p>Notably the <strong>AKS</strong> workflow in the Azure portal has been noticably improved and for quick one-off installations I would recommend going that route. Of course for production type deployments always following the infrastructure as code methodology is indeed the way to go! The following templates setup a vnet in a separate &ldquo;production&rdquo; resource group where the subnet is given to the actual <strong>AKS</strong> deployment.</p>
+
+<ul>
+<li><a href="https://github.com/sylus/aks-iac">AKS ARM templates</a></li>
+</ul>
+
+<h3 id="create-vnet-resources">Create VNET resources</h3>
+
+<p>Specify the name of your resource group that the custom virtual network resides in.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">export AKS_VNET_RG<span style="color:#f92672">=</span>network-production-rg
+export AKS_VNET_LOCATION<span style="color:#f92672">=</span>eastus</code></pre></div>
+<p>If the resouce group was not created beforehand you can simply create it now.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">az group create -n <span style="color:#e6db74">${</span>AKS_VNET_RG<span style="color:#e6db74">}</span> <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>                -l <span style="color:#e6db74">${</span>AKS_VNET_LOCATION<span style="color:#e6db74">}</span></code></pre></div>
+<p>We can now instantiate the custom vnet template that will create both a local and containers subnet.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">az group deployment create -n aks-managed-vnet <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>                           -g <span style="color:#e6db74">${</span>AKS_VNET_RG<span style="color:#e6db74">}</span> <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>                           --template-file kube-vnet.json <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>                           --parameters kube-vnet.parameters.json</code></pre></div>
+<h3 id="service-principal">Service Principal</h3>
+
+<p>Grant the AKS cluster Service Principal access to our custom virtual network using the resource group.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">az ad sp create-for-rbac --name aks-sylus</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">az role assignment create --role<span style="color:#f92672">=</span>Contributor <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>                          --scope<span style="color:#f92672">=</span>/subscriptions/SUBSCRIPTION_ID/resourceGroups/<span style="color:#e6db74">${</span>AKS_VNET_RG<span style="color:#e6db74">}</span> <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>                          --assignee SP_CLIENTID</code></pre></div>
+<h3 id="create-aks-cluster">Create AKS cluster</h3>
+
+<p>In order to create a managed AKS cluster leveraging the custom vnet simply fill out the missing parameters in the <code>kube-managed.parameters.json</code> file. These parameters include but are not limited to the following:</p>
+
+<ul>
+<li>dnsPrefix</li>
+<li>resourceName</li>
+<li>servicePrincipalClientId</li>
+<li>servicePrincipalClientSecret</li>
+<li>sshRSAPublicKey</li>
+<li>vnetSubnetID</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">export AKS_RG<span style="color:#f92672">=</span>aks-sylus-rg
+export AKS_NAME<span style="color:#f92672">=</span>aks-managed-sylus</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">az group create -n <span style="color:#e6db74">${</span>AKS_RG<span style="color:#e6db74">}</span> <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>                -l <span style="color:#e6db74">${</span>AKS_VNET_LOCATION<span style="color:#e6db74">}</span></code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">az group deployment create -n <span style="color:#e6db74">${</span>AKS_NAME<span style="color:#e6db74">}</span> <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>                           -g <span style="color:#e6db74">${</span>AKS_RG<span style="color:#e6db74">}</span> <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>                          --template-file kube-managed.json <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>                          --parameters kube-managed.parameters.json</code></pre></div>
+<h3 id="common-operations">Common Operations</h3>
+
+<p>Establish the kubeconfig context and retrieve cluster configuration.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">export AKS_RG<span style="color:#f92672">=</span>aks-sylus-rg
+export AKS_NAME<span style="color:#f92672">=</span>aks-managed-sylus</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">az aks get-credentials --resource-group <span style="color:#e6db74">${</span>AKS_RG<span style="color:#e6db74">}</span> <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>                       --name <span style="color:#e6db74">${</span>AKS_NAME<span style="color:#e6db74">}</span></code></pre></div>
+<p>Similarly to <code>kubectl proxy</code> with launch and open the Kubernetes dashboard.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">az aks browse --resource-group <span style="color:#e6db74">${</span>AKS_RG<span style="color:#e6db74">}</span> <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>              --name <span style="color:#e6db74">${</span>AKS_NAME<span style="color:#e6db74">}</span></code></pre></div>
+<p>Will delete the managed cluster service alongside with all its dependencies.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">az group delete --name <span style="color:#e6db74">${</span>AKS_RG<span style="color:#e6db74">}</span></code></pre></div>
+<p>This will enable dev spaces for the deployed AKS cluster.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">az aks use-dev-spaces -g <span style="color:#e6db74">${</span>AKS_RG<span style="color:#e6db74">}</span> <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>                      -n <span style="color:#e6db74">${</span>AKS_NAME<span style="color:#e6db74">}</span> <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>                      -s develop/sylus -y</code></pre></div>
+<h2 id="aks-engine">AKS-Engine</h2>
+
+<blockquote>
+<p>For operators that need complete control and customizability of a Kubernetes cluster.</p>
+</blockquote>
+
+<p>AKS Engine provides convenient tooling to quickly bootstrap Kubernetes cluster on Azure. By leveraging ARM (Azure Resource Manager), AKS Engine helps you create, destroy and maintain clusters provisioned with basic IaaS resources in Azure. AKS Engine is also the open source upstream used by AKS for performing these operations to provide the managed service implementations. One of the biggest differences that you control the master node (and associated costs) and much of the internal operations such as maintenance and upgrading.</p>
+
+<p>This is useful for a few scenarios:</p>
+
+<ul>
+<li>Running hybrid Linux / Windows nodes (June for AKS)</li>
+<li>Master node ownership which allows for use of features</li>
+<li>Customization of the API-Server</li>
+<li>Advanced networking</li>
+</ul>
+
+<h3 id="cluster-definition">Cluster Definition</h3>
+
+<p>aks-engine reads a JSON cluster definition and generates a number of files that may be submitted to Azure Resource Manager (ARM). The generated
+files include:</p>
+
+<ul>
+<li>apimodel.json: Expanded version of the cluster definition provided to the generation command</li>
+<li>azuredeploy.json: Represents a complete description of all Azure resources required to fulfill the cluster definition</li>
+<li>azuredeploy.parameters.json: the parameters file holds a series of custom variables which are used in various locations throughout the deployment</li>
+</ul>
+
+<p>Normally you can simply run acs-engine deploy to do a one-off cluster, however as we are building lots of clusters we are generating our templates first,
+and then running the deployment. This has advantages because we can iterate over a bunch of different cluster declarations, and then run them through
+acs-engine generate to get the definitive template/params for sending to ARM.</p>
+
+<p>The following example illustrates a base cluster definition that we pass to AKS Engine to generate our full template.</p>
+
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
+  <span style="color:#f92672">&#34;apiVersion&#34;</span>: <span style="color:#e6db74">&#34;vlabs&#34;</span>,
+  <span style="color:#f92672">&#34;properties&#34;</span>: {
+    <span style="color:#f92672">&#34;orchestratorProfile&#34;</span>: {
+      <span style="color:#f92672">&#34;orchestratorType&#34;</span>: <span style="color:#e6db74">&#34;Kubernetes&#34;</span>,
+      <span style="color:#f92672">&#34;orchestratorRelease&#34;</span>: <span style="color:#e6db74">&#34;1.12&#34;</span>,
+      <span style="color:#f92672">&#34;kubernetesConfig&#34;</span>: {
+        <span style="color:#f92672">&#34;enableDataEncryptionAtRest&#34;</span>: <span style="color:#66d9ef">true</span>,
+        <span style="color:#f92672">&#34;enableEncryptionWithExternalKms&#34;</span>: <span style="color:#66d9ef">true</span>,
+        <span style="color:#f92672">&#34;enableRbac&#34;</span>: <span style="color:#66d9ef">true</span>,
+        <span style="color:#f92672">&#34;privateCluster&#34;</span>: {
+          <span style="color:#f92672">&#34;enabled&#34;</span>: <span style="color:#66d9ef">true</span>
+        },
+        <span style="color:#f92672">&#34;networkPolicy&#34;</span>: <span style="color:#e6db74">&#34;azure&#34;</span>,
+        <span style="color:#f92672">&#34;enableRbac&#34;</span>: <span style="color:#66d9ef">true</span>,
+        <span style="color:#f92672">&#34;kubeletConfig&#34;</span>: {
+          <span style="color:#f92672">&#34;--allow-privileged&#34;</span>: <span style="color:#e6db74">&#34;true&#34;</span>,
+          <span style="color:#f92672">&#34;--anonymous-auth&#34;</span>: <span style="color:#e6db74">&#34;false&#34;</span>,
+          <span style="color:#f92672">&#34;--max-pods&#34;</span>: <span style="color:#e6db74">&#34;90&#34;</span>,
+          <span style="color:#f92672">&#34;--network-plugin&#34;</span>: <span style="color:#e6db74">&#34;cni&#34;</span>
+        },
+        <span style="color:#f92672">&#34;gcHighThreshold&#34;</span>:<span style="color:#ae81ff">85</span>,
+        <span style="color:#f92672">&#34;gcLowThreshold&#34;</span>: <span style="color:#ae81ff">80</span>,
+        <span style="color:#f92672">&#34;apiServerConfig&#34;</span>: {
+          <span style="color:#f92672">&#34;--allow-privileged&#34;</span>: <span style="color:#e6db74">&#34;true&#34;</span>,
+          <span style="color:#f92672">&#34;--anonymous-auth&#34;</span>: <span style="color:#e6db74">&#34;false&#34;</span>
+        },
+        <span style="color:#f92672">&#34;addons&#34;</span>: [
+          {
+            <span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;tiller&#34;</span>,
+            <span style="color:#f92672">&#34;enabled&#34;</span>: <span style="color:#66d9ef">true</span>
+          },
+          {
+            <span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;kubernetes-dashboard&#34;</span>,
+            <span style="color:#f92672">&#34;enabled&#34;</span>: <span style="color:#66d9ef">true</span>
+          },
+          {
+            <span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;container-monitoring&#34;</span>,
+            <span style="color:#f92672">&#34;enabled&#34;</span>: <span style="color:#66d9ef">true</span>
+          },
+          <span style="color:#960050;background-color:#1e0010">...</span>
+        ]
+      }
+    },
+    <span style="color:#f92672">&#34;aadProfile&#34;</span>: {
+      <span style="color:#f92672">&#34;serverAppID&#34;</span>: <span style="color:#e6db74">&#34;XXXXXX&#34;</span>,
+      <span style="color:#f92672">&#34;clientAppID&#34;</span>: <span style="color:#e6db74">&#34;XXXXXX&#34;</span>,
+      <span style="color:#f92672">&#34;tenantID&#34;</span>:    <span style="color:#e6db74">&#34;XXXXXX&#34;</span>
+    },
+    <span style="color:#f92672">&#34;masterProfile&#34;</span>: {
+      <span style="color:#f92672">&#34;count&#34;</span>: <span style="color:#ae81ff">1</span>,
+      <span style="color:#f92672">&#34;dnsPrefix&#34;</span>: <span style="color:#e6db74">&#34;k8s-aks-environment&#34;</span>,
+      <span style="color:#f92672">&#34;vmSize&#34;</span>: <span style="color:#e6db74">&#34;Standard_D4s_v3&#34;</span>,
+      <span style="color:#f92672">&#34;OSDiskSizeGB&#34;</span>: <span style="color:#ae81ff">200</span>,
+      <span style="color:#f92672">&#34;vnetSubnetId&#34;</span>: <span style="color:#e6db74">&#34;/subscriptions/XXXXXX/resourceGroups/network-XXXX-rg/providers/Microsoft.Network/virtualNetworks/XXXX-VNet/subnets/Container&#34;</span>,
+      <span style="color:#f92672">&#34;firstConsecutiveStaticIP&#34;</span>: <span style="color:#e6db74">&#34;XXX.XX.XX.5&#34;</span>,
+      <span style="color:#f92672">&#34;vnetCidr&#34;</span>: <span style="color:#e6db74">&#34;XXX.XX.XX.0/24&#34;</span>
+    },
+    <span style="color:#f92672">&#34;agentPoolProfiles&#34;</span>: [
+      {
+        <span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;linuxpool1&#34;</span>,
+        <span style="color:#f92672">&#34;count&#34;</span>: <span style="color:#ae81ff">1</span>,
+        <span style="color:#f92672">&#34;customNodeLabels&#34;</span>: {
+          <span style="color:#f92672">&#34;os&#34;</span>: <span style="color:#e6db74">&#34;linux&#34;</span>
+        },
+        <span style="color:#f92672">&#34;vmSize&#34;</span>: <span style="color:#e6db74">&#34;Standard_D4s_v3&#34;</span>,
+        <span style="color:#f92672">&#34;OSDiskSizeGB&#34;</span>: <span style="color:#ae81ff">200</span>,
+        <span style="color:#f92672">&#34;storageProfile&#34;</span> : <span style="color:#e6db74">&#34;ManagedDisks&#34;</span>,
+        <span style="color:#f92672">&#34;availabilityProfile&#34;</span>: <span style="color:#e6db74">&#34;AvailabilitySet&#34;</span>,
+        <span style="color:#f92672">&#34;vnetSubnetId&#34;</span>: <span style="color:#e6db74">&#34;/subscriptions/XXXXXX/resourceGroups/network-XXXX-rg/providers/Microsoft.Network/virtualNetworks/XXXX-VNet/subnets/Container&#34;</span>
+      },
+      {
+        <span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;windowspool1&#34;</span>,
+        <span style="color:#f92672">&#34;count&#34;</span>: <span style="color:#ae81ff">1</span>,
+        <span style="color:#f92672">&#34;customNodeLabels&#34;</span>: {
+          <span style="color:#f92672">&#34;os&#34;</span>: <span style="color:#e6db74">&#34;windows&#34;</span>
+        },
+        <span style="color:#f92672">&#34;osType&#34;</span>: <span style="color:#e6db74">&#34;Windows&#34;</span>,
+        <span style="color:#f92672">&#34;vmSize&#34;</span>: <span style="color:#e6db74">&#34;Standard_D4s_v3&#34;</span>,
+        <span style="color:#f92672">&#34;OSDiskSizeGB&#34;</span>: <span style="color:#ae81ff">200</span>,
+        <span style="color:#f92672">&#34;storageProfile&#34;</span> : <span style="color:#e6db74">&#34;ManagedDisks&#34;</span>,
+        <span style="color:#f92672">&#34;availabilityProfile&#34;</span>: <span style="color:#e6db74">&#34;AvailabilitySet&#34;</span>,
+        <span style="color:#f92672">&#34;vnetSubnetId&#34;</span>: <span style="color:#e6db74">&#34;/subscriptions/XXXXXX/resourceGroups/network-XXXX-rg/providers/Microsoft.Network/virtualNetworks/XXXX-VNet/subnets/Container&#34;</span>
+      }
+    ],
+    <span style="color:#f92672">&#34;linuxProfile&#34;</span>: {
+      <span style="color:#f92672">&#34;adminUsername&#34;</span>: <span style="color:#e6db74">&#34;XXXXXX&#34;</span>,
+      <span style="color:#f92672">&#34;ssh&#34;</span>: {
+        <span style="color:#f92672">&#34;publicKeys&#34;</span>: [
+          {
+            <span style="color:#f92672">&#34;keyData&#34;</span>: <span style="color:#e6db74">&#34;ssh-rsa XXXXXX&#34;</span>
+          }
+        ]
+      }
+    },
+    <span style="color:#f92672">&#34;windowsProfile&#34;</span>: {
+      <span style="color:#f92672">&#34;adminUsername&#34;</span>: <span style="color:#e6db74">&#34;XXXXXX&#34;</span>,
+      <span style="color:#f92672">&#34;adminPassword&#34;</span>: <span style="color:#e6db74">&#34;XXXXXX&#34;</span>,
+      <span style="color:#f92672">&#34;windowsPublisher&#34;</span>: <span style="color:#e6db74">&#34;MicrosoftWindowsServer&#34;</span>,
+      <span style="color:#f92672">&#34;windowsOffer&#34;</span>: <span style="color:#e6db74">&#34;WindowsServerSemiAnnual&#34;</span>,
+      <span style="color:#f92672">&#34;windowsSku&#34;</span>: <span style="color:#e6db74">&#34;Datacenter-Core-1803-with-Containers-smalldisk&#34;</span>
+    },
+    <span style="color:#f92672">&#34;servicePrincipalProfile&#34;</span>: {
+      <span style="color:#f92672">&#34;objectid&#34;</span>: <span style="color:#e6db74">&#34;XXXXXX&#34;</span>,
+      <span style="color:#f92672">&#34;clientId&#34;</span>: <span style="color:#e6db74">&#34;XXXXXX&#34;</span>,
+      <span style="color:#f92672">&#34;secret&#34;</span>: <span style="color:#e6db74">&#34;XXXXXX&#34;</span>
+    }
+  }
+}</code></pre></div>
+
+<h3 id="installation">Installation</h3>
+
+<p>With the baseline cluster definition in hand you can now pass the file / template to AKS Engine which will generate the corresponding ARM templates for you. Additionally all of the Keys, Certificates, and KubeConfig files for every Azure supported region are also generated by the binary.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">aks-engine generate --api-model<span style="color:#f92672">=</span>k8s.environment.official.json</code></pre></div>
+<h3 id="deployment">Deployment</h3>
+
+<p>Leveraging the generated ARM templates you can now deploy a Kubernetes cluster on the Azure infrastructure in your chosen resource group. Please note that your user and service principal will need to have appropriate IAM permissions in order for the deployment to succeed. If ever there is a problem during the installation you can also add the &ldquo;–debug&rdquo; flag which will show you detailed information about each step that is performed.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">az group deployment create --name <span style="color:#e6db74">&#34;k8s-aks-environment&#34;</span> <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>                          --resource-group <span style="color:#e6db74">&#34;kubernetes-environment-rg&#34;</span> <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>                          --template-file <span style="color:#e6db74">&#34;./_output/k8s-aks-environment/azuredeploy.json&#34;</span> <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>                          --parameters <span style="color:#e6db74">&#34;./_output/k8s-aks-environment/azuredeploy.parameters.json&#34;</span></code></pre></div>
+<!-- Links Referenced -->
+</main>
+        
+            <footer id="wb-info">
+                <div class="landscape">
+                    <nav class="container wb-navcurr">
+                        <h2 class="invisible">About Aurora</h2>
+                    </nav>
+                </div>
+            </footer>
+        
+</body>
+</html>

@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<!--[if lt IE 9]><html class="no-js lt-ie9" lang="en" dir="ltr">><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en"  >
+<!--<![endif]-->
+    <head>
+
+        <meta charset="utf-8">
+        <meta content="width=device-width,initial-scale=1" name="viewport">    
+    <!-- Web Experience Toolkit (WET) / Boîte à outils de l'expérience Web (BOEW)
+            wet-boew.github.io/wet-boew/License-en.html / wet-boew.github.io/wet-boew/Licence-fr.html -->
+    <title>Kubernetes Security</title>        
+        <meta name="description" content="">    
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js" type="text/javascript"></script>
+    <script>var custom_styling = document.createElement("script");</script>
+    
+    <link href="/digital-academy/lib/@gctools-components/aurora-ds/css/aurora.min.css" rel="stylesheet" type="text/css">
+    
+    <link href="/digital-academy/lib/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+</head>
+    <body vocab="http://schema.org/" typeof="WebPage">    
+    <script src="/digital-academy/lib/@gctools-components/aurora-ds/js/aurora.min.js" type="text/javascript"></script>
+
+            <ul class ="sr-only">
+                <li class="wb-slc">
+                    <a class="wb-sl" href="#wb-cont">
+                        
+                            Skip to main content
+                        
+                    </a>
+                </li>
+                <li class="wb-slc">
+                    <a class="wb-sl" href="#wb-info">
+                        
+                            Skip to "About government"
+                        
+                    </a>
+                </li>
+            </ul>
+
+        <header>
+            <nav class="main-nav navbar navbar-expand bg-white" typeof="SiteNavigationElement">
+    <div class="navbar-collapse nav-holder">
+        <ul class="mx-auto nav-site scroll nav nav-tabs" style="border-bottom: none;">
+            
+            
+            
+            <li class="nav-item">
+            <a class="nav-link" href="https://github.com/statcan/statcan">
+                <i class='fa fa-github'></i>
+                <span>GitHub</span>
+            </a>
+            
+            </li>
+            
+        </ul>
+    </div>
+</nav>
+
+            <nav aria-label="breadcrumb">
+                <h2 class="sr-only">You are here:</h2>
+                <div class="container">
+                    
+                    
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="https://sylus.ca/digital-academy/">Home</a></li>
+                        
+                            <li class="breadcrumb-item">&nbsp;Kubernetes Security</li>
+                        
+                    </ol>
+                </div>
+            </nav>
+        </header>
+<main property="mainContentOfPage" class="container"><link rel="stylesheet" href="https://sylus.ca/digital-academy//css/custom.css">
+<h1 id="wb-cont">Kubernetes Security</h1><div class="row mrgn-tp-lg">
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-6 col-sm-6">
+                <div id="toc" class="panel panel-default">
+                    <header class="panel-heading">
+                        <h2 class="h4 mrgn-tp-0">Table of Contents</h2>
+                    </header>
+                    <div class="panel-body">
+                        <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#interactive-learning-environment">Interactive Learning Environment</a></li>
+<li><a href="#logging-and-auditing">Logging and Auditing</a></li>
+<li><a href="#user-authentication-and-authorization">User authentication and authorization</a>
+<ul>
+<li><a href="#role-based-access-control">Role-based access control</a></li>
+<li><a href="#openid-connect">OpenID Connect</a></li>
+<li><a href="#user-group-permissions">User/Group permissions</a></li>
+<li><a href="#service-accounts">Service accounts</a></li>
+<li><a href="#roles-and-role-bindings">Roles and role bindings</a>
+<ul>
+<li><a href="#roles">Roles</a></li>
+<li><a href="#cluster-roles">Cluster Roles</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#resource-quotas">Resource Quotas</a>
+<ul>
+<li><a href="#pod-resource-requests">Pod Resource Requests</a></li>
+</ul></li>
+<li><a href="#networking-security">Networking Security</a>
+<ul>
+<li><a href="#network-policies">Network Policies</a></li>
+<li><a href="#service-mesh">Service Mesh</a>
+<ul>
+<li><a href="#security">Security</a></li>
+<li><a href="#mutual-tls">Mutual TLS</a></li>
+<li><a href="#observability">Observability</a></li>
+</ul></li>
+<li><a href="#private-network-space">Private Network Space</a></li>
+</ul></li>
+<li><a href="#application-security">Application security</a>
+<ul>
+<li><a href="#policy-controller">Policy Controller</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+        
+
+<h2 id="interactive-learning-environment">Interactive Learning Environment</h2>
+
+<blockquote>
+<p>All of our labs are powered by <a href="https://katacoda.com">Katacoda</a> and are located at this <a href="https://katacoda.com/sylus">Profile</a>.</p>
+</blockquote>
+
+<figure class="text-center">
+    <img src="/digital-academy/images/kubernetes/kubernetes-security.png#center"/> <figcaption>
+            <h4>Figure 1: Security</h4>
+        </figcaption>
+</figure>
+
+
+<p>As Kubernetes is entirely API driven, controlling and limiting who can access the cluster and what actions they are allowed to perform is the first line of defense. The following is a meant as a high level guide for what should be done at a minimum in a Kubernetes cluster to ensure that it is actively secured and guarded against any malicious intrusion.</p>
+
+<h2 id="logging-and-auditing">Logging and Auditing</h2>
+
+<p>All logs from the cluster are sent to a central logging service for rentention and analysis. These logs include:</p>
+
+<ul>
+<li>Kubernetes control plane</li>
+<li>Pod logs</li>
+<li>Node logs</li>
+</ul>
+
+<p>On Azure, this is accomplished with the OMS agent plugin which sends logs to Log Analytics. An open source alternative is to run flutend and send refined logs to Elasticsearch which is what we currently recommend.</p>
+
+<h2 id="user-authentication-and-authorization">User authentication and authorization</h2>
+
+<p>Kubernetes offers a variety of authentication strategies including: client certificates, OpenID Connect Tokens, Webhook Token Authentication, Authentication Proxy, Service Account Tokens, and several more. Each strategy has its benefits and drawbacks but ultimately, they are all responsible for asserting the identity of the user making an API call so that the Kubernetes RBAC framework can then decide if the caller is authorized to perform the requested action.</p>
+
+<h3 id="role-based-access-control">Role-based access control</h3>
+
+<p>Kubernetes clusters are deployed with role-based access control (RBAC). Within Kubernetes, RBAC restricts the permissions of users and services to those explicitly allowed. Kubernetes RBAC is configured via policies applied within the cluster.</p>
+
+<h3 id="openid-connect">OpenID Connect</h3>
+
+<p>Kubernetes supports external authentication with providers supporting OpenID Connect. In Azure, using AKS Engine, this integration can be added during cluster creation by following the documentation.</p>
+
+<h3 id="user-group-permissions">User/Group permissions</h3>
+
+<p>By default, users and groups have no permissions within the cluster. For security reasons, users and groups should be given the minimum privileges
+required. Additionally, permissions given to users should be restricted to specific namespaces rather than cluster wide.
+See Roles and Role Bindings below for documentation on how to assign users and groups permissions.</p>
+
+<h3 id="service-accounts">Service accounts</h3>
+
+<p>Applications within the cluster requiring access to the Kubernetes API should have their own service accounts. These service accounts can be given the required permissions via roles and role bindings.</p>
+
+<h3 id="roles-and-role-bindings">Roles and role bindings</h3>
+
+<p>There are two types of roles within a cluster:</p>
+
+<ul>
+<li>Roles</li>
+<li>ClusterRoles</li>
+</ul>
+
+<p>Similarily, there are two types of bindings:</p>
+
+<ul>
+<li>RoleBindings</li>
+<li>ClusterRoleBindings</li>
+</ul>
+
+<h4 id="roles">Roles</h4>
+
+<p>Role objects apply to the namespace in which they are created. Roles are assigned to users, groups and service principals via RoleBinding objects.
+Again, role bindings apply only the namespace in which they are created.</p>
+
+<p>An example role and role binding:</p>
+
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+name: limited-user
+rules:
+- apiGroups:
+- <span style="color:#e6db74">&#34;&#34;</span>
+- apps
+- extensions
+resources:
+- deployments
+- cronjobs
+- jobs
+- secrets
+- services
+- persistentvolumeclaims
+- pods
+- pods/attach
+- pods/exec
+- pods/log
+- configmaps
+- ingresses
+verbs:
+- get
+- list
+- watch
+- create
+- update
+- patch
+- delete
+- edit
+- exec
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+name: $USER-limited-user
+subjects:
+- kind: User <span style="color:#75715e"># User, Group or ServiceAccount</span>
+name: https://sts.windows.net/&lt;tenant-id&gt;/<span style="color:#75715e">#&lt;user-id&gt;</span>
+namespace: default <span style="color:#75715e"># Only needed for ServiceAccount</span>
+roleRef:
+kind: Role
+name: limited-user
+apiGroup: rbac.authorization.k8s.io</code></pre></div>
+
+<blockquote>
+<p>Note: When using Azure Active Directory, users are referenced via <a href="https://sts.windows.net/">https://sts.windows.net/</a><tenant-id>/#<user-id>. Groups are references only by their object id. See documentation for more information.</p>
+</blockquote>
+
+<h4 id="cluster-roles">Cluster Roles</h4>
+
+<p>ClusterRole objects are cluster-wide (i.e, they are not namespace specific). Users, groups and service principals are given these roles via ClusterRol
+eBinding objects.</p>
+
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+name: limited-user
+rules:
+- apiGroups: [<span style="color:#e6db74">&#34;&#34;</span>]
+resources:
+- nodes
+- namespaces
+verbs:
+- get
+- list
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+name: $USER-limited-user
+subjects:
+- kind: User
+name: https://sts.windows.net/&lt;tenant-id&gt;/<span style="color:#75715e">#&lt;user-id&gt;</span>
+namespace: default
+roleRef:
+kind: ClusterRole
+name: limited-user
+apiGroup: rbac.authorization.k8s.io</code></pre></div>
+
+<blockquote>
+<p>Note: The use of cluster roles is discouraged. However, they are necessary for granting certain permissions: for example, listing namespace. These permissions should only be given with an appropriate review of the security risks.</p>
+</blockquote>
+
+<h2 id="resource-quotas">Resource Quotas</h2>
+
+<p>To prevent abuse (either accidental or purposeful), quotas should be set for the different Kubernetes objects.</p>
+
+<p>At minimum, namespaces should have the following quotas applied:</p>
+
+<table>
+<thead>
+<tr>
+<th>Quota</th>
+<th>Value</th>
+<th>Notes</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>pods</td>
+<td></td>
+<td>A misconfiguration of jobs, deployments, etc. can result in the creation of many pods</td>
+</tr>
+
+<tr>
+<td>services.loadbalancers</td>
+<td>0</td>
+<td>Prevent users for exposing applications via load balancers. Web applications (aka. HTTP) should be exposed via a ingress.</td>
+</tr>
+
+<tr>
+<td>services.nodeports</td>
+<td>0</td>
+<td>See above</td>
+</tr>
+</tbody>
+</table>
+
+<blockquote>
+<p>Note: A list of available quotas is available in the Kubernetes Resource Quotas documentation.</p>
+</blockquote>
+
+<h3 id="pod-resource-requests">Pod Resource Requests</h3>
+
+<p>Pods should request appropriate resources (CPU and memory). All pods must have a resource limit (CPU and memory) applied. This allows the scheduler to appropriately schedule pods based on available resources and to prevent a single application from consuming all available resources on a node.</p>
+
+<h2 id="networking-security">Networking Security</h2>
+
+<p>Network security consists of the policies and practices adopted to prevent and monitor unauthorized access, misuse, modification, or denial of a computer network and network-accessible resources. Network security involves the authorization of access to data in a network, which is controlled by the network administrator.</p>
+
+<h3 id="network-policies">Network Policies</h3>
+
+<p>Clusters use a Container Network Interfaces (CNI) plugin which supports network policies.</p>
+
+<p>Within Azure, clusters use the Azure CNI plugin. Azure CNI supports network policies for Linux containers. At this time, no Open Source CNI plugin supports Windows network policies.</p>
+
+<p>Network policies operate at layer 4. Rules can be defined based on:</p>
+
+<ul>
+<li>Source IP/Protocol/Port</li>
+<li>Destination IP/Protocol/Port</li>
+</ul>
+
+<blockquote>
+<p>Note: Since all Kubernetes objects are dynamic, the network policies are able to reference them via labels rather than knowing their source/destination IPs. The rules will automatically update as pods come and go.</p>
+</blockquote>
+
+<h3 id="service-mesh">Service Mesh</h3>
+
+<p>Service meshes are designed to operate at Layer 7 (where possible). This allows them to:</p>
+
+<ul>
+<li>Route based on information within the request (source, headers, method, path, etc.). In addition to selecting the appropriate backend, this allows a/b service testing, add more, etc.</li>
+<li>Restrict access to services, or parts of services (e.g., permitted HTTP methods)</li>
+<li>Set requests timeouts</li>
+<li>Automatically retry requests upon failure</li>
+</ul>
+
+<h4 id="security">Security</h4>
+
+<p>Service meshes have to ability to restrict outgoing network connections. External services can be individual whitelisted as required.</p>
+
+<p>Service meshes track all connections, and where possible, the information contained within the request. This information can be centrally logged for later
+review.</p>
+
+<p>Working in conjunction with network policies, we can force all traffic through the mesh preventing bypass vulnerabilities.</p>
+
+<h4 id="mutual-tls">Mutual TLS</h4>
+
+<p>Most service meshes support mutual TLS authentication. This provides:</p>
+
+<ul>
+<li>Assurance as to who is sending the request</li>
+<li>Assurance that you are talking to who you are expecting to be talking to</li>
+<li>Communication is encrypted between to client and the server</li>
+</ul>
+
+<p>Effectively, this provides end-to-end TLS for services within the Kubernetes cluster.</p>
+
+<h4 id="observability">Observability</h4>
+
+<p>Because all connections through the service mesh are tracked, we get visibility as to what pods are connecting to. This includes services within the cluster
+and those outside of the cluster.</p>
+
+<p>The tracking of requests includes:</p>
+
+<ul>
+<li>Source and destination</li>
+<li>Request information (if sent plain text)</li>
+<li>Response status</li>
+</ul>
+
+<h3 id="private-network-space">Private Network Space</h3>
+
+<p>To limit exposure, Kubernetes, and in particular, the API server, should not be exposed to the internet.</p>
+
+<h2 id="application-security">Application security</h2>
+
+<p>Every organization has some rules. Some of these are essential to meet governance, and legal requirements and other are based on learning from past experience and not repeating the same mistakes. These decisions cannot tolerate human response time as they need near a real-time action. Services that are policy enabled to make the organization agile and are essential for long-term success as they are more adaptable as violations and conflicts can be discovered consistently as they are not prone to human error.</p>
+
+<p>Kubernetes compliance is enforced at the “runtime” via tools such as network policy and pod security policy. kubernetes-policy-controller extends the compliance enforcement at “create” event not at “run“ event. For example, a kubernetes service could answer questions like :</p>
+
+<ul>
+<li>Can we whitelist / blacklist registries</li>
+<li>Not allow conflicting hosts for ingresses</li>
+<li>Label objects based on a user from a department</li>
+<li>What are the policies that my cluster is violating</li>
+</ul>
+
+<h3 id="policy-controller">Policy Controller</h3>
+
+<ul>
+<li>Restrict image sources. For example, restrict to pulling only from artifactory.cloud.statcan.ca</li>
+<li>Ensure ingress matches the Kubernetes cluster expected host name</li>
+<li>Require annotation to all objects defining contact for the application</li>
+<li>Automatically ensuring that windows annotation is used for matching workload</li>
+<li>Namespace PE would have annotation and auto apply to nested resources for costing</li>
+<li>Ensure that any load balancers made is automatically made into an internal one</li>
+</ul>
+
+<!-- Links Referenced -->
+</main>
+        
+            <footer id="wb-info">
+                <div class="landscape">
+                    <nav class="container wb-navcurr">
+                        <h2 class="invisible">About Aurora</h2>
+                    </nav>
+                </div>
+            </footer>
+        
+</body>
+</html>

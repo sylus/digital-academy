@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<!--[if lt IE 9]><html class="no-js lt-ie9" lang="en" dir="ltr">><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en"  >
+<!--<![endif]-->
+    <head>
+
+        <meta charset="utf-8">
+        <meta content="width=device-width,initial-scale=1" name="viewport">    
+    <!-- Web Experience Toolkit (WET) / Boîte à outils de l'expérience Web (BOEW)
+            wet-boew.github.io/wet-boew/License-en.html / wet-boew.github.io/wet-boew/Licence-fr.html -->
+    <title>Kubernetes</title>        
+        <meta name="description" content="">    
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js" type="text/javascript"></script>
+    <script>var custom_styling = document.createElement("script");</script>
+    
+    <link href="/digital-academy/lib/@gctools-components/aurora-ds/css/aurora.min.css" rel="stylesheet" type="text/css">
+    
+    <link href="/digital-academy/lib/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+</head>
+    <body vocab="http://schema.org/" typeof="WebPage">    
+    <script src="/digital-academy/lib/@gctools-components/aurora-ds/js/aurora.min.js" type="text/javascript"></script>
+
+            <ul class ="sr-only">
+                <li class="wb-slc">
+                    <a class="wb-sl" href="#wb-cont">
+                        
+                            Skip to main content
+                        
+                    </a>
+                </li>
+                <li class="wb-slc">
+                    <a class="wb-sl" href="#wb-info">
+                        
+                            Skip to "About government"
+                        
+                    </a>
+                </li>
+            </ul>
+
+        <header>
+            <nav class="main-nav navbar navbar-expand bg-white" typeof="SiteNavigationElement">
+    <div class="navbar-collapse nav-holder">
+        <ul class="mx-auto nav-site scroll nav nav-tabs" style="border-bottom: none;">
+            
+            
+            
+            <li class="nav-item">
+            <a class="nav-link" href="https://github.com/statcan/statcan">
+                <i class='fa fa-github'></i>
+                <span>GitHub</span>
+            </a>
+            
+            </li>
+            
+        </ul>
+    </div>
+</nav>
+
+            <nav aria-label="breadcrumb">
+                <h2 class="sr-only">You are here:</h2>
+                <div class="container">
+                    
+                    
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="https://sylus.ca/digital-academy/">Home</a></li>
+                        
+                            <li class="breadcrumb-item">&nbsp;Kubernetes</li>
+                        
+                    </ol>
+                </div>
+            </nav>
+        </header>
+<main property="mainContentOfPage" class="container"><link rel="stylesheet" href="https://sylus.ca/digital-academy//css/custom.css">
+<h1 id="wb-cont">Kubernetes</h1><div class="row mrgn-tp-lg">
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-6 col-sm-6">
+                <div id="toc" class="panel panel-default">
+                    <header class="panel-heading">
+                        <h2 class="h4 mrgn-tp-0">Table of Contents</h2>
+                    </header>
+                    <div class="panel-body">
+                        <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#background">Background</a></li>
+<li><a href="#highlights">Highlights</a></li>
+</ul></li>
+</ul>
+</nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+        
+
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe src="//www.youtube.com/embed/daVUONZqn88" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
+</div>
+
+
+<h2 id="introduction">Introduction</h2>
+
+<blockquote>
+<p>Kubernetes orchestrates the computing, networking, and storage infrastructure on behalf of user workloads.</p>
+</blockquote>
+
+<p><strong>Kubernetes</strong> is a portable, extensible open-source platform for managing containerized workloads and services, that facilitates both declarative configuration and automation. It has a huge and rapidly growing ecosystem after being open sourced by Google in 2014, being the second largest repository on GitHub only behind Linux. It builds upon a decade and a half of experience that Google has with running production workloads at scale.</p>
+
+<p>Kubernetes services, support, and tools are widely available as evidenced both by every single Cloud Service Provider now providing a managed service of it and big name companies putting their weight behind it in terms of both managed offerings and code contributions.</p>
+
+<p><img src="/digital-academy/images/kubernetes/kubernetes-arch.png#center" alt="KNative Architecture" /></p>
+
+<div class="row">
+  <div class="col-md-4">
+    <h2 class="text-center">CSP</h2>
+    <p class="text-center">Cloud Service Providers with managed service offerings</p>
+    <ul class="mrgn-tp-lg">
+      <li>Google (+++)</li>
+      <li>Microsoft (++)</li>
+      <li>AWS</li>
+      <li>Digital Ocean</li>
+      <li>IBM</li>
+      <li>Oracle</li>
+    </ul>
+  </div>
+
+<p><div class="col-md-4">
+    <h2 class="text-center">PaaS</h2>
+    <p class="text-center">Platform as a service oferings of Kubernetes</p>
+    <ul class="mrgn-tp-lg">
+      <li>RedHat</li>
+      <li>VMWare</li>
+      <li>Pivotal</li>
+    </ul>
+  </div></p>
+
+<p><div class="col-md-4">
+    <h2 class="text-center">Hyper Scale</h2>
+    <p class="text-center">Powers much of the big name sites today</p>
+    <ul class="mrgn-tp-lg">
+      <li>Google</li>
+      <li>Shopify</li>
+      <li>GitHub</li>
+      <li>Tinder</li>
+      <li>Pokemon Go</li>
+    </ul>
+  </div>
+</div></p>
+
+<h2 id="background">Background</h2>
+
+<p>As containers become more popular each day, more technology is being developed to help unleash all the power containers can offer. One of the most useful technologies created around containers in the deployment side is orchestrators.</p>
+
+<p>A container orchestrator is a software that is able to orchestrate and organize containers across any number of physical or virtual nodes. This greatly simplifies the deployment of infrastructure (each node only has Docker installed) and its operation (as all servers are exactly equal). The container orchestrator takes into account things as failing nodes, adding more nodes to the cluster or removing nodes from the cluster by moving containers from one node to another to keep them available at all times.</p>
+
+<p>While containers + orchestrators technology not only resolves a lot of problems related with infrastructure management, it also resolves a lot of problems regarding deploying software in the infrastructure, as the software, its dependencies and runtime are always deployed at the same time, minimizing the errors commonly associated to deployments in non-immutable environments.</p>
+
+<h2 id="highlights">Highlights</h2>
+
+<ol>
+<li><p><strong>Managed complexity</strong>: Automation of the deployment, scaling, and operation of application containers in a clustered environment via primitives</p></li>
+
+<li><p><strong>Vendor Lock-in</strong>: Essentially every major cloud provider (public, private, hybrid) support Kubernetes</p></li>
+
+<li><p><strong>Multi-Cloud</strong>: Ideal for managing multi-cloud environments / workloads</p></li>
+
+<li><p><strong>Self-healing</strong>: Auto-placement, auto-restart, auto-replication, auto-scaling</p></li>
+
+<li><p><strong>Google Backed</strong>: Originally built by Google leveraging a decade of experience running containers at scale</p></li>
+
+<li><p><strong>Vibrant Community</strong>: One of the fastest moving projects in open source history, 2nd largest. Additionally over 50,000 users on slack which include many google engineers.</p></li>
+
+<li><p><strong>Big Name Supporters</strong>: Google, Microsoft, AWS, IBM, RedHat, Oracle, VMWare, Intel, Pivotal etc</p></li>
+
+<li><p><strong>Flexibility</strong>: Simplicity of a PaaS with the flexibility of IaaS</p></li>
+</ol>
+
+<!-- Links Referenced -->
+</main>
+        
+            <footer id="wb-info">
+                <div class="landscape">
+                    <nav class="container wb-navcurr">
+                        <h2 class="invisible">About Aurora</h2>
+                    </nav>
+                </div>
+            </footer>
+        
+</body>
+</html>
