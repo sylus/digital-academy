@@ -1,11 +1,11 @@
-Statistics Canada
-=================
+Digital Academy
+===============
 
 [![Build Status][ci-badge]][ci]
 
-Statistics Canada static site powered by the Aurora theme by GCTools.
+Digital Academy static site powered by the Aurora theme by GCTools.
 
 <!-- Links Referenced -->
 
-[ci]:           https://travis-ci.org/statcan/statcan
-[ci-badge]:     https://travis-ci.org/statcan/statcan.svg?branch=master
+[ci]:           https://travis-ci.org/sylus/digital-academy
+[ci-badge]:     https://travis-ci.org/sylus/digital-academy.svg?branch=master
