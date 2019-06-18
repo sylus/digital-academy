@@ -1,5 +1,5 @@
 {
-  "name": "statcan-website",
+  "name": "digital-academy-website",
   "version": "0.0.1",
   "description": "Course provided by the Digital Academy under the Canada School of Public Service.",
   "main": "",
@@ -13,7 +13,7 @@
   "license": "MIT",
   "keywords": [
     "canada",
-    "statcan",
+    "digital-academy",
     "wxt"
   ],
   "scripts": {
